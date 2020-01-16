@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "./dist",
+    "sourceMap": true, // typescript sourcemap 생성 (https://stackoverflow.com/questions/17493738/what-is-a-typescript-map-file)https://stackoverflow.com/questions/17493738/what-is-a-typescript-map-file
+    "emitDecoratorMetadata": true, // 데코레이터의 메타 데이터를 보여줌
+    "experimentalDecorators": true, // 데코레이터 기능을 지원 (https://typescript-kr.github.io/pages/Decorators.html
+    "esModuleInterop": true // esModule 시스템을 사용할 수 있게 함. 이러면 import 할 수 있음.
+  },
+  "include": ["src/**/*.ts"] // src 폴더 내의 모든 ts 파일을 컴파일
+}
