@@ -1,0 +1,20 @@
+{
+  "name": "web-temporary-server",
+  "version": "1.0.0",
+  "description": "this is web temporary server",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kucc/web-temporary-server.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kucc/web-temporary-server/issues"
+  },
+  "homepage": "https://github.com/kucc/web-temporary-server#readme"
+}
