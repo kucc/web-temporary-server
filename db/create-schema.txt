@@ -1,0 +1,290 @@
+-- MySQL Workbench Forward Engineering
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+-- -----------------------------------------------------
+-- Schema KUCC
+-- -----------------------------------------------------
+
+-- -----------------------------------------------------
+-- Schema KUCC
+-- -----------------------------------------------------
+CREATE SCHEMA IF NOT EXISTS `KUCC` DEFAULT CHARACTER SET utf8 ;
+USE `KUCC` ;
+
+-- -----------------------------------------------------
+-- Table `KUCC`.`Users`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `KUCC`.`Users` (
+  `Id` INT NOT NULL AUTO_INCREMENT,
+  `Email` VARCHAR(254) NOT NULL,
+  `Name` VARCHAR(50) NOT NULL,
+  `Nickname` VARCHAR(100) NOT NULL,
+  `Password` VARCHAR(100) NOT NULL,
+  `CreatedAt` DATETIME NOT NULL,
+  `IsAdmin` TINYINT NULL DEFAULT 0,
+  `Description` TEXT NULL,
+  PRIMARY KEY (`Id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `KUCC`.`PostTypes`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `KUCC`.`PostTypes` (
+  `Id` INT NOT NULL AUTO_INCREMENT,
+  `Name` VARCHAR(50) NOT NULL,
+  PRIMARY KEY (`Id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `KUCC`.`Posts`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `KUCC`.`Posts` (
+  `Id` INT NOT NULL AUTO_INCREMENT,
+  `Title` VARCHAR(100) NOT NULL,
+  `Content` TEXT NOT NULL,
+  `CreatedAt` DATETIME NOT NULL,
+  `State` TINYINT NOT NULL DEFAULT 1,
+  `UserId` INT NOT NULL,
+  `PostTypes_Id` INT NOT NULL,
+  PRIMARY KEY (`Id`),
+  INDEX `fk_Board_User1_idx` (`UserId` ASC) ,
+  INDEX `fk_Posts_PostTypes1_idx` (`PostTypes_Id` ASC) ,
+  CONSTRAINT `fk_Board_User1`
+    FOREIGN KEY (`UserId`)
+    REFERENCES `KUCC`.`Users` (`Id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Posts_PostTypes1`
+    FOREIGN KEY (`PostTypes_Id`)
+    REFERENCES `KUCC`.`PostTypes` (`Id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `KUCC`.`Comments`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `KUCC`.`Comments` (
+  `Id` INT NOT NULL AUTO_INCREMENT,
+  `Content` TEXT NOT NULL,
+  `CreatedAt` DATETIME NOT NULL,
+  `UserId` INT NOT NULL,
+  `PostId` INT NOT NULL,
+  `State` TINYINT NOT NULL DEFAULT 1,
+  PRIMARY KEY (`Id`),
+  INDEX `fk_Comment_User_idx` (`UserId` ASC) ,
+  INDEX `fk_Comment_Board1_idx` (`PostId` ASC) ,
+  CONSTRAINT `fk_Comment_User`
+    FOREIGN KEY (`UserId`)
+    REFERENCES `KUCC`.`Users` (`Id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Comment_Board1`
+    FOREIGN KEY (`PostId`)
+    REFERENCES `KUCC`.`Posts` (`Id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `KUCC`.`Projects`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `KUCC`.`Projects` (
+  `Id` INT NOT NULL AUTO_INCREMENT,
+  `UserId` INT NOT NULL,
+  `CreatedAt` DATETIME NOT NULL,
+  `Title` VARCHAR(100) NOT NULL,
+  `Place` VARCHAR(100) NOT NULL,
+  `MaxAttendance` INT NOT NULL,
+  PRIMARY KEY (`Id`),
+  INDEX `fk_StudySession_User1_idx` (`UserId` ASC) ,
+  CONSTRAINT `fk_StudySession_User1`
+    FOREIGN KEY (`UserId`)
+    REFERENCES `KUCC`.`Users` (`Id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `KUCC`.`PostLikes`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `KUCC`.`PostLikes` (
+  `Id` INT NOT NULL AUTO_INCREMENT,
+  `UserId` INT NOT NULL,
+  `PostId` INT NOT NULL,
+  PRIMARY KEY (`Id`),
+  INDEX `fk_Like_User1_idx` (`UserId` ASC) ,
+  INDEX `fk_Like_Board1_idx` (`PostId` ASC) ,
+  CONSTRAINT `fk_Like_User1`
+    FOREIGN KEY (`UserId`)
+    REFERENCES `KUCC`.`Users` (`Id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Like_Board1`
+    FOREIGN KEY (`PostId`)
+    REFERENCES `KUCC`.`Posts` (`Id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `KUCC`.`Photos_suspend`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `KUCC`.`Photos_suspend` (
+  `Id` INT NOT NULL AUTO_INCREMENT,
+  `Image` VARCHAR(45) NOT NULL,
+  `Title` VARCHAR(45) NOT NULL,
+  `CreatedAt` DATETIME NOT NULL,
+  `Content` VARCHAR(45) NULL,
+  `UserId` INT NOT NULL,
+  PRIMARY KEY (`Id`),
+  INDEX `fk_Gallery_User1_idx` (`UserId` ASC) ,
+  CONSTRAINT `fk_Gallery_User1`
+    FOREIGN KEY (`UserId`)
+    REFERENCES `KUCC`.`Users` (`Id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `KUCC`.`UserProjects`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `KUCC`.`UserProjects` (
+  `UserId` INT NOT NULL,
+  `ProjectId` INT NOT NULL,
+  `Attendance` INT NULL DEFAULT 0,
+  `Late` INT NULL DEFAULT 0,
+  `Absense` INT NULL DEFAULT 0,
+  INDEX `fk_User_has_StudySession_StudySession1_idx` (`ProjectId` ASC) ,
+  INDEX `fk_User_has_StudySession_User1_idx` (`UserId` ASC) ,
+  PRIMARY KEY (`UserId`, `ProjectId`),
+  CONSTRAINT `fk_User_has_StudySession_User1`
+    FOREIGN KEY (`UserId`)
+    REFERENCES `KUCC`.`Users` (`Id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_User_has_StudySession_StudySession1`
+    FOREIGN KEY (`ProjectId`)
+    REFERENCES `KUCC`.`Projects` (`Id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `KUCC`.`CommentLikes`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `KUCC`.`CommentLikes` (
+  `Id` INT NOT NULL AUTO_INCREMENT,
+  `CommentId` INT NOT NULL,
+  `UserId` INT NOT NULL,
+  PRIMARY KEY (`Id`),
+  INDEX `fk_CommentLikes_Comments1_idx` (`CommentId` ASC) ,
+  INDEX `fk_CommentLikes_User1_idx` (`UserId` ASC) ,
+  CONSTRAINT `fk_CommentLikes_Comments1`
+    FOREIGN KEY (`CommentId`)
+    REFERENCES `KUCC`.`Comments` (`Id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_CommentLikes_User1`
+    FOREIGN KEY (`UserId`)
+    REFERENCES `KUCC`.`Users` (`Id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `KUCC`.`CommentReplies`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `KUCC`.`CommentReplies` (
+  `Id` INT NOT NULL AUTO_INCREMENT,
+  `Parent` INT NOT NULL,
+  `Children` INT NOT NULL,
+  PRIMARY KEY (`Id`),
+  INDEX `fk_CommentsReply_Comments1_idx` (`Parent` ASC) ,
+  INDEX `fk_CommentsReply_Comments2_idx` (`Children` ASC) ,
+  CONSTRAINT `fk_CommentsReply_Comments1`
+    FOREIGN KEY (`Parent`)
+    REFERENCES `KUCC`.`Comments` (`Id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_CommentsReply_Comments2`
+    FOREIGN KEY (`Children`)
+    REFERENCES `KUCC`.`Comments` (`Id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `KUCC`.`UserProjectAttendances`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `KUCC`.`UserProjectAttendances` (
+  `Id` INT NOT NULL AUTO_INCREMENT,
+  `UserId` INT NOT NULL,
+  `ProjectId` INT NOT NULL,
+  `CreatedAt` TIMESTAMP NOT NULL,
+  `Status` INT NOT NULL,
+  `Description` TEXT NULL,
+  PRIMARY KEY (`Id`),
+  INDEX `fk_UserProjectAttendances_UserProjects1_idx` (`UserId` ASC, `ProjectId` ASC) ,
+  CONSTRAINT `fk_UserProjectAttendances_UserProjects1`
+    FOREIGN KEY (`UserId` , `ProjectId`)
+    REFERENCES `KUCC`.`UserProjects` (`UserId` , `ProjectId`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `KUCC`.`EventTypes`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `KUCC`.`EventTypes` (
+  `Id` INT NOT NULL AUTO_INCREMENT,
+  `Name` VARCHAR(50) NOT NULL,
+  PRIMARY KEY (`Id`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `KUCC`.`Events`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `KUCC`.`Events` (
+  `Id` INT NOT NULL AUTO_INCREMENT,
+  `Name` VARCHAR(100) NOT NULL,
+  `Description` TEXT NULL,
+  `StartAt` DATETIME NULL,
+  `EndAt` DATETIME NULL,
+  `Place` VARCHAR(50) NULL,
+  `UserId` INT NOT NULL,
+  `EventTypeId` INT NOT NULL,
+  PRIMARY KEY (`Id`),
+  INDEX `fk_Events_Users1_idx` (`UserId` ASC) ,
+  INDEX `fk_Events_EventType1_idx` (`EventTypeId` ASC) ,
+  CONSTRAINT `fk_Events_Users1`
+    FOREIGN KEY (`UserId`)
+    REFERENCES `KUCC`.`Users` (`Id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Events_EventType1`
+    FOREIGN KEY (`EventTypeId`)
+    REFERENCES `KUCC`.`EventTypes` (`Id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
