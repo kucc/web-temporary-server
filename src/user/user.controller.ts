@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Param } from '@nestjs/common';
+import { Controller, Get, Post, Param, Body } from '@nestjs/common';
 
 import { UserService } from './user.service';
 import { ValidateIdPipe } from 'src/common/pipe/validate-id.pipe';
@@ -8,8 +8,8 @@ export class UserController {
   public constructor(private readonly userService: UserService) {}
 
   @Get('hello')
-  getUser() {
-    return this.userService.getUser();
+  getAllUser() {
+    return this.userService.findAllUser();
   }
 
   @Get(':Id')
