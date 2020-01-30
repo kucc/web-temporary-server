@@ -10,6 +10,7 @@ import {
 import { UserService } from './user.service';
 import { ValidateIdPipe } from 'src/common/pipe/validate-id.pipe';
 import { UserResponseDTO } from './dto/user-response.dto';
+import { UserRequestDTO } from './dto/user-request.dto';
 import { VerifyEmailRequestDTO } from './dto/verify-email-request.dto';
 
 @Controller('user')
@@ -19,6 +20,12 @@ export class UserController {
   @Get('hello')
   async getAllUser() {
     return await this.userService.findAllUser();
+  }
+
+  @Post('')
+  async signUp(@Body() userRequestDTO: UserRequestDTO) {
+    const User = await this.userService.createUser(userRequestDTO);
+    return User;
   }
 
   @Post('/email-verification')
