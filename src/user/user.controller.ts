@@ -10,6 +10,7 @@ import {
 import { UserService } from './user.service';
 import { ValidateIdPipe } from 'src/common/pipe/validate-id.pipe';
 import { UserResponseDTO } from './dto/user-response.dto';
+import { VerifyEmailRequestDTO } from './dto/verify-email-request.dto';
 
 @Controller('user')
 export class UserController {
@@ -18,6 +19,17 @@ export class UserController {
   @Get('hello')
   async getAllUser() {
     return await this.userService.findAllUser();
+  }
+
+  @Post('/email-verification')
+  async verifyEmail(@Body() verifyEmailRequestDTO: VerifyEmailRequestDTO) {
+    const result = await this.userService.isEmailDuplicate(
+      verifyEmailRequestDTO.email,
+    );
+
+    return {
+      result,
+    };
   }
 
   @Get('/:Id')

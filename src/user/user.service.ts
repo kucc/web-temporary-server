@@ -21,4 +21,17 @@ export class UserService {
       },
     });
   }
+  public async isEmailDuplicate(email: string): Promise<boolean> {
+    const duplicateUser = await this.userRepository.findOne({
+      where: {
+        email,
+      },
+    });
+
+    if (duplicateUser) {
+      return false;
+    }
+
+    return true;
+  }
 }
