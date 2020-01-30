@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty } from 'class-validator';
+import { IsEmail, IsNotEmpty, IsEmpty } from 'class-validator';
 
 export class UserRequestDTO {
   @IsEmail()
@@ -12,8 +12,10 @@ export class UserRequestDTO {
   public readonly nickname: string;
 
   @IsNotEmpty()
-  public readonly password: string;
+  public password: string;
 
-  @IsNotEmpty()
   public readonly description: string;
+
+  @IsEmpty()
+  public salt: string;
 }
