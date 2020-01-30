@@ -3,6 +3,7 @@ import { Base } from '../common/entity/base.entity';
 import { CommentLikeEntity } from '../common/entity/comment-like.entity';
 import { PostLikeEntity } from '../common/entity/post-like.entity';
 import { UserProjetEntity } from '../common/entity/user-project.entity';
+import { EventEntity } from '../event/event.entity';
 
 @Entity({
   name: 'Users',
@@ -13,6 +14,7 @@ export class UserEntity extends Base {
     type: 'varchar',
     length: 254,
     nullable: false,
+    unique: true,
   })
   public email: string;
 
@@ -71,4 +73,10 @@ export class UserEntity extends Base {
     userProject => userProject.userId,
   )
   public projects: UserProjetEntity[];
+
+  @OneToMany(
+    type => EventEntity,
+    eventEntity => eventEntity.userId,
+  )
+  public events: EventEntity[];
 }
