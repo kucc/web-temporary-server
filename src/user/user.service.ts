@@ -1,8 +1,10 @@
-import { Injectable, ConflictException } from '@nestjs/common';
-import { UserEntity } from './user.entity';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Injectable, ConflictException } from '@nestjs/common';
+
+import { UserEntity } from './user.entity';
 import { UserRequestDTO } from './dto/user-request.dto';
+import { Bcrypt } from '../common/lib/bcrypt';
 
 @Injectable()
 export class UserService {
@@ -32,22 +34,22 @@ export class UserService {
       );
     }
 
+    userRequestDTO.salt = await Bcrypt.createSalt();
+    userRequestDTO.password = await Bcrypt.hash(
+      userRequestDTO.password,
+      userRequestDTO.salt,
+    );
+
     const User = this.userRepository.create(userRequestDTO);
     await this.userRepository.save(User);
     return User;
   }
 
-  public async isEmailDuplicate(email: string): Promise<boolean> {
-    const duplicateUser = await this.userRepository.findOne({
+  public async findUserByEmail(email: string): Promise<UserEntity> {
+    return await this.userRepository.findOne({
       where: {
         email,
       },
     });
-
-    if (duplicateUser) {
-      return false;
-    }
-
-    return true;
   }
 }

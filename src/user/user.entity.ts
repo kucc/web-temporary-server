@@ -43,6 +43,14 @@ export class UserEntity extends Base {
   public password: string;
 
   @Column({
+    name: 'salt',
+    type: 'varchar',
+    length: 100,
+    nullable: false,
+  })
+  public salt: string;
+
+  @Column({
     name: 'isAdmin',
     type: 'boolean',
     default: false,

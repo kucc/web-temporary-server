@@ -18,24 +18,30 @@ export class UserController {
   public constructor(private readonly userService: UserService) {}
 
   @Post('')
-  async signUp(@Body() userRequestDTO: UserRequestDTO) {
+  async signUp(
+    @Body() userRequestDTO: UserRequestDTO,
+  ): Promise<UserResponseDTO> {
     const User = await this.userService.createUser(userRequestDTO);
-    return User;
+    return new UserResponseDTO(User);
   }
 
   @Post('/email-verification')
   async verifyEmail(@Body() verifyEmailRequestDTO: VerifyEmailRequestDTO) {
-    const result = await this.userService.isEmailDuplicate(
+    const User = await this.userService.findUserByEmail(
       verifyEmailRequestDTO.email,
     );
 
-    return {
-      result,
-    };
+    if (!User) {
+      return { result: true };
+    }
+
+    return { result: false };
   }
 
   @Get('/:Id')
-  async getUserById(@Param('Id', ValidateIdPipe) Id: Number) {
+  async getUserById(
+    @Param('Id', ValidateIdPipe) Id: Number,
+  ): Promise<UserResponseDTO> {
     const User = await this.userService.findUserById(Id);
 
     if (!User) {
