@@ -17,11 +17,6 @@ import { VerifyEmailRequestDTO } from './dto/verify-email-request.dto';
 export class UserController {
   public constructor(private readonly userService: UserService) {}
 
-  @Get('hello')
-  async getAllUser() {
-    return await this.userService.findAllUser();
-  }
-
   @Post('')
   async signUp(@Body() userRequestDTO: UserRequestDTO) {
     const User = await this.userService.createUser(userRequestDTO);

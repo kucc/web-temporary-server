@@ -11,10 +11,6 @@ export class UserService {
     private readonly userRepository: Repository<UserEntity>,
   ) {}
 
-  public async findAllUser(): Promise<UserEntity[]> {
-    return await this.userRepository.find();
-  }
-
   public async findUserById(Id: Number): Promise<UserEntity> {
     return await this.userRepository.findOne({
       where: {
@@ -29,6 +25,7 @@ export class UserService {
         email: userRequestDTO.email,
       },
     });
+
     if (duplicateUser) {
       throw new ConflictException(
         `${userRequestDTO.email}은 이미 존재하는 회원입니다`,
