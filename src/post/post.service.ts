@@ -16,6 +16,7 @@ export class PostService {
       where: {
         Id,
       },
+      relations: ['postTypeId'],
     });
   }
 }
