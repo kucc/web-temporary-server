@@ -1,18 +1,25 @@
-import { Injectable } from '@nestjs/common';
 import * as jwt from 'jsonwebtoken';
+import { Injectable } from '@nestjs/common';
 
-import { LoginFormDTO } from './dto/login-form.dto';
-import { UserEntity } from '../user/user.entity';
 import { Bcrypt } from '../common/lib/bcrypt';
+import { UserEntity } from '../user/user.entity';
+import { LoginFormDTO } from './dto/login-form.dto';
+import { UserResponseDTO } from '../user/dto/user-response.dto';
 
 @Injectable()
 export class AuthService {
   public async login(loginFormDTO: LoginFormDTO) {}
 
-  public async createAccessToken() {
-    const accessToken = jwt.sign('hello', process.env.JWT_SECRET, {
-      expiresIn: Number(process.env.JWT_EXPIRATION),
-    });
+  public async createAccessToken(user: UserEntity) {
+    const userResponse = new UserResponseDTO(user);
+
+    const accessToken = jwt.sign(
+      { data: userResponse },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: Number(process.env.JWT_EXPIRATION),
+      },
+    );
 
     return accessToken;
   }
