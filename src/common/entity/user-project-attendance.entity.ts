@@ -1,6 +1,6 @@
 import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { Base } from './base.entity';
-import { UserProjectEntity } from './user-project.entity';
+import { UserProjectEntity } from '../../user-project/user-project.entity';
 
 @Entity({
   name: 'UserProjectAttendances',

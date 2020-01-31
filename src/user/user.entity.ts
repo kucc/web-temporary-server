@@ -6,7 +6,7 @@ import { Base } from '../common/entity/base.entity';
 import { CommentEntity } from '../comment/comment.entity';
 import { ProjectEntity } from '../project/project.entity';
 import { PostLikeEntity } from '../common/entity/post-like.entity';
-import { UserProjectEntity } from '../common/entity/user-project.entity';
+import { UserProjectEntity } from '../user-project/user-project.entity';
 import { CommentLikeEntity } from '../common/entity/comment-like.entity';
 
 @Entity({

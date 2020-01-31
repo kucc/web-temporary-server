@@ -2,7 +2,7 @@ import { Entity, Column, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 
 import { UserEntity } from '../user/user.entity';
 import { Base } from '../common/entity/base.entity';
-import { UserProjectEntity } from '../common/entity/user-project.entity';
+import { UserProjectEntity } from '../user-project/user-project.entity';
 
 @Entity({
   name: 'Projects',
