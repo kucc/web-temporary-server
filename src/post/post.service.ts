@@ -10,7 +10,7 @@ export class PostService {
     private readonly postRepository: Repository<PostEntity>,
   ) {}
 
-  public async findPostById(Id: Number): Promise<PostEntity> {
+  public async findPostById(Id: number): Promise<PostEntity> {
     return await this.postRepository.findOne({
       where: {
         Id,
@@ -20,8 +20,8 @@ export class PostService {
   }
 
   public async findPostsByPage(
-    page: Number,
-    sort: String = 'desc',
+    page: number,
+    sort: string = 'desc',
   ): Promise<PostEntity[]> {
     // TODO:
     // 1. 한 페이지에 보여줄 게시물 갯수 논의 (viewCount)

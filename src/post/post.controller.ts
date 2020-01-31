@@ -12,6 +12,9 @@ export class PostController {
   }
   @Get()
   async getPostsByPage(
+    @Query('page') page: number,
+    @Query('sort') sort: string,
+  ) {
     return this.postService.findPostsByPage(page, sort);
   }
 }
