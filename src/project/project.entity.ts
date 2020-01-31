@@ -30,7 +30,7 @@ export class ProjectEntity extends Base {
     nullable: true,
     default: 10,
   })
-  public maxAttendance: Number;
+  public maxAttendance: number;
 
   @OneToMany(
     type => UserProjectEntity,
@@ -46,5 +46,5 @@ export class ProjectEntity extends Base {
     name: 'userId',
     referencedColumnName: 'Id',
   })
-  public userId: Number;
+  public userId: number;
 }
