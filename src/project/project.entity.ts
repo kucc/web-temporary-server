@@ -36,7 +36,7 @@ export class ProjectEntity extends Base {
     type => UserProjectEntity,
     userProject => userProject.projectId,
   )
-  public users: UserProjectEntity[];
+  public userProjects: UserProjectEntity[];
 
   @ManyToOne(
     type => UserEntity,

@@ -10,7 +10,7 @@ import { UserProjectAttendanceEntity } from './user-project-attendance.entity';
 export class UserProjectEntity extends Base {
   @ManyToOne(
     type => UserEntity,
-    user => user.projects,
+    user => user.userProjects,
   )
   @JoinColumn({
     name: 'userId',
@@ -20,7 +20,7 @@ export class UserProjectEntity extends Base {
 
   @ManyToOne(
     type => ProjectEntity,
-    project => project.users,
+    project => project.userProjects,
   )
   @JoinColumn({
     name: 'projectId',

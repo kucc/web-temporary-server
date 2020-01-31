@@ -1,11 +1,13 @@
 import { Entity, Column, OneToMany } from 'typeorm';
+
+import { PostEntity } from '../post/post.entity';
+import { EventEntity } from '../event/event.entity';
 import { Base } from '../common/entity/base.entity';
-import { CommentLikeEntity } from '../common/entity/comment-like.entity';
+import { CommentEntity } from '../comment/comment.entity';
+import { ProjectEntity } from '../project/project.entity';
 import { PostLikeEntity } from '../common/entity/post-like.entity';
 import { UserProjectEntity } from '../common/entity/user-project.entity';
-import { EventEntity } from '../event/event.entity';
-import { CommentEntity } from '../comment/comment.entity';
-import { PostEntity } from '../post/post.entity';
+import { CommentLikeEntity } from '../common/entity/comment-like.entity';
 
 @Entity({
   name: 'Users',
@@ -79,10 +81,16 @@ export class UserEntity extends Base {
   public likedPosts: PostLikeEntity[];
 
   @OneToMany(
+    type => ProjectEntity,
+    project => project.userId,
+  )
+  public projects: ProjectEntity[];
+
+  @OneToMany(
     type => UserProjectEntity,
     userProject => userProject.userId,
   )
-  public projects: UserProjectEntity[];
+  public userProjects: UserProjectEntity[];
 
   @OneToMany(
     type => EventEntity,
