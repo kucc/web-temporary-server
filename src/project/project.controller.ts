@@ -13,7 +13,6 @@ import { ValidateIdPipe } from 'src/common/pipe/validate-id.pipe';
 import { ProjectService } from './project.service';
 import { ProjectResponseDTO } from './dto/project-response.dto';
 import { ProjectRequestDTO } from './dto/project-request.dto';
-import { Http2ServerRequest } from 'http2';
 
 @Controller('project')
 export class ProjectController {
@@ -60,10 +59,12 @@ export class ProjectController {
     const Project = await this.projectService.findProjectById(Id);
     if (!Project) {
       throw new NotFoundException(
-        `${Id}에 해당하는 프로젝트가 존재하지 않습니다.`,
+        `Id가 ${Id}에 해당하는 프로젝트가 존재하지 않습니다.`,
       );
-    } else {
-      this.projectService.deleteProjectById(Id);
     }
+
+    this.projectService.deleteProjectById(Id);
+
+    return '삭제되었습니다.';
   }
 }
