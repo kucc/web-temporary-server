@@ -7,11 +7,11 @@ export class PostController {
   public constructor(private readonly postService: PostService) {}
 
   @Get(':Id')
-  getPostById(@Param('Id', ValidateIdPipe) Id: Number) {
+  async getPostById(
     return this.postService.findPostById(Id);
   }
   @Get()
-  getPostsByPage(@Query('page') page: Number, @Query('sort') sort: String) {
+  async getPostsByPage(
     return this.postService.findPostsByPage(page, sort);
   }
 }
