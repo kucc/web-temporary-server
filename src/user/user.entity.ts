@@ -2,7 +2,7 @@ import { Entity, Column, OneToMany } from 'typeorm';
 import { Base } from '../common/entity/base.entity';
 import { CommentLikeEntity } from '../common/entity/comment-like.entity';
 import { PostLikeEntity } from '../common/entity/post-like.entity';
-import { UserProjetEntity } from '../common/entity/user-project.entity';
+import { UserProjectEntity } from '../common/entity/user-project.entity';
 import { EventEntity } from '../event/event.entity';
 
 @Entity({
@@ -77,10 +77,10 @@ export class UserEntity extends Base {
   public likedPosts: PostLikeEntity[];
 
   @OneToMany(
-    type => UserProjetEntity,
+    type => UserProjectEntity,
     userProject => userProject.userId,
   )
-  public projects: UserProjetEntity[];
+  public projects: UserProjectEntity[];
 
   @OneToMany(
     type => EventEntity,
