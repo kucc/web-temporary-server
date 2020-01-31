@@ -1,6 +1,7 @@
-import { Entity, Column, OneToMany } from 'typeorm';
+import { Entity, Column, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
 import { Base } from '../common/entity/base.entity';
 import { UserProjetEntity } from '../common/entity/user-project.entity';
+import { UserEntity } from '../user/user.entity';
 
 @Entity({
   name: 'Projects',
@@ -30,9 +31,13 @@ export class ProjectEntity extends Base {
   })
   public maxAttendance: Number;
 
-  @OneToMany(
-    type => UserProjetEntity,
-    userProject => userProject.projectId,
+  @ManyToOne(
+    type => UserEntity,
+    user => user.projects,
   )
-  public users: UserProjetEntity[];
+  @JoinColumn({
+    name: 'userId',
+    referencedColumnName: 'Id',
+  })
+  public userId: Number;
 }
