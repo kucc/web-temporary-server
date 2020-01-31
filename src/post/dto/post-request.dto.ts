@@ -9,7 +9,4 @@ export class PostRequestDTO {
 
   @IsNotEmpty()
   public readonly postTypeId: number;
-
-  @IsNotEmpty()
-  public readonly nickname: string;
 }
