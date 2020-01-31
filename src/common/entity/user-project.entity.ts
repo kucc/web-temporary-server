@@ -7,7 +7,7 @@ import { UserProjectAttendanceEntity } from './user-project-attendance.entity';
 @Entity({
   name: 'UserProjects',
 })
-export class UserProjetEntity extends Base {
+export class UserProjectEntity extends Base {
   @ManyToOne(
     type => UserEntity,
     user => user.projects,

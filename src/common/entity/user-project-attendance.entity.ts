@@ -1,6 +1,6 @@
 import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { Base } from './base.entity';
-import { UserProjetEntity } from './user-project.entity';
+import { UserProjectEntity } from './user-project.entity';
 
 @Entity({
   name: 'UserProjectAttendances',
@@ -27,7 +27,7 @@ export class UserProjectAttendanceEntity extends Base {
   public description: String;
 
   @ManyToOne(
-    type => UserProjetEntity,
+    type => UserProjectEntity,
     userProject => userProject.attendances,
     { nullable: false },
   )
