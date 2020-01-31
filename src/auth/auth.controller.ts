@@ -22,7 +22,7 @@ export class AuthController {
   ) {}
 
   @Post('/login')
-  async login(@Body() loginFormDTO: LoginFormDTO) {
+  async login(@Body() loginFormDTO: LoginFormDTO, @Res() response: Response) {
     const user = await this.userService.findUserByEmail(loginFormDTO.email);
 
     if (!user) {
@@ -40,9 +40,20 @@ export class AuthController {
       throw new BadRequestException(`비밀번호가 일치하지 않습니다`);
     }
 
-    return '성공';
+    const accessToken = await this.authService.createAccessToken(user);
+    response.cookie('accessToken', accessToken);
+
+    response.json({
+      result: true,
+    });
   }
 
   @Get('/logout')
-  async logout(@Req() request: Request, @Res() response: Response) {}
+  async logout(@Req() request: Request, @Res() response: Response) {
+    response.clearCookie('accessToken');
+
+    response.json({
+      result: true,
+    });
+  }
 }
