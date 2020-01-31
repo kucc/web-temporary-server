@@ -1,8 +1,8 @@
 import { Entity, ManyToOne, JoinColumn, Column, OneToMany } from 'typeorm';
-import { UserEntity } from '../../user/user.entity';
-import { ProjectEntity } from '../../project/project.entity';
-import { Base } from './base.entity';
-import { UserProjectAttendanceEntity } from './user-project-attendance.entity';
+import { UserEntity } from '../user/user.entity';
+import { ProjectEntity } from '../project/project.entity';
+import { Base } from '../common/entity/base.entity';
+import { UserProjectAttendanceEntity } from '../common/entity/user-project-attendance.entity';
 
 @Entity({
   name: 'UserProjects',
