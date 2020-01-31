@@ -9,6 +9,7 @@ import {
 import { Base } from '../common/entity/base.entity';
 import { PostTypeEntity } from '../common/entity/post-type.entity';
 import { PostLikeEntity } from '../common/entity/post-like.entity';
+import { UserEntity } from '../user/user.entity';
 
 @Entity({
   name: 'Posts',
@@ -45,6 +46,16 @@ export class PostEntity extends Base {
     referencedColumnName: 'Id',
   })
   public postTypeId: Number;
+
+  @ManyToOne(
+    type => UserEntity,
+    user => user.posts,
+  )
+  @JoinColumn({
+    name: 'userId',
+    referencedColumnName: 'Id',
+  })
+  public userId: Number;
 
   @OneToMany(
     type => PostLikeEntity,
