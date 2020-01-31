@@ -2,6 +2,7 @@ import { Entity, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { Base } from '../common/entity/base.entity';
 import { CommentLikeEntity } from '../common/entity/comment-like.entity';
 import { CommentReplyEntity } from '../common/entity/comment-reply.entity';
+import { UserEntity } from '../user/user.entity';
 
 @Entity({
   name: 'Comments',
@@ -20,6 +21,16 @@ export class CommentEntity extends Base {
     default: 0,
   })
   public likes: Number;
+
+  @ManyToOne(
+    type => UserEntity,
+    user => user.comments,
+  )
+  @JoinColumn({
+    name: 'userId',
+    referencedColumnName: 'Id',
+  })
+  public userId: Number;
 
   @OneToMany(
     type => CommentReplyEntity,

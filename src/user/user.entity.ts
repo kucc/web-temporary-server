@@ -4,6 +4,8 @@ import { CommentLikeEntity } from '../common/entity/comment-like.entity';
 import { PostLikeEntity } from '../common/entity/post-like.entity';
 import { UserProjectEntity } from '../common/entity/user-project.entity';
 import { EventEntity } from '../event/event.entity';
+import { CommentEntity } from '../comment/comment.entity';
+import { PostEntity } from '../post/post.entity';
 
 @Entity({
   name: 'Users',
@@ -87,4 +89,16 @@ export class UserEntity extends Base {
     eventEntity => eventEntity.userId,
   )
   public events: EventEntity[];
+
+  @OneToMany(
+    type => CommentEntity,
+    comment => comment.userId,
+  )
+  public comments: CommentEntity[];
+
+  @OneToMany(
+    type => PostEntity,
+    post => post.userId,
+  )
+  public posts: PostEntity[];
 }
