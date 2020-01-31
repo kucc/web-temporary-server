@@ -11,6 +11,7 @@ import {
 import { PostService } from './post.service';
 import { ValidateIdPipe } from 'src/common/pipe/validate-id.pipe';
 import { PostResponseDTO } from './dto/post-response.dto';
+import { PostRequestDTO } from './dto/post-request.dto';
 
 @Controller('post')
 export class PostController {
@@ -26,6 +27,14 @@ export class PostController {
       throw new NotFoundException(`${Id}번 Post가 존재하지 않습니다.`);
     }
 
+    return new PostResponseDTO(Post);
+  }
+
+  @Post('')
+  async writePost(
+    @Body() postRequestDTO: PostRequestDTO,
+  ): Promise<PostResponseDTO> {
+    const Post = await this.postService.createPost(postRequestDTO);
     return new PostResponseDTO(Post);
   }
 

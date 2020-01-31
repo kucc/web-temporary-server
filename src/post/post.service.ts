@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PostEntity } from './post.entity';
 import { Repository } from 'typeorm';
+import { PostRequestDTO } from './dto/post-request.dto';
 
 @Injectable()
 export class PostService {
@@ -19,6 +20,14 @@ export class PostService {
     });
   }
 
+  public async createPost(postRequestDTO: PostRequestDTO): Promise<PostEntity> {
+    // TODO:
+    // get the userId of writer, and save it together
+
+    const Post = await this.postRepository.create(postRequestDTO);
+    await this.postRepository.save(Post);
+    return Post;
+  }
   public async findPostsByPage(
     page: number,
     sort: string = 'desc',
