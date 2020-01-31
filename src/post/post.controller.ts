@@ -1,4 +1,13 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Param,
+  Body,
+  Query,
+  NotFoundException,
+} from '@nestjs/common';
+
 import { PostService } from './post.service';
 import { ValidateIdPipe } from 'src/common/pipe/validate-id.pipe';
 import { PostResponseDTO } from './dto/post-response.dto';
@@ -12,6 +21,11 @@ export class PostController {
     @Param('Id', ValidateIdPipe) Id: number,
   ): Promise<PostResponseDTO> {
     const Post = await this.postService.findPostById(Id);
+
+    if (!Post) {
+      throw new NotFoundException(`${Id}번 Post가 존재하지 않습니다.`);
+    }
+
     return new PostResponseDTO(Post);
   }
 
