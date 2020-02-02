@@ -2,8 +2,10 @@ import {
   ExecutionContext,
   CanActivate,
   BadRequestException,
+  Injectable,
 } from '@nestjs/common';
 
+@Injectable()
 export class OnlyMemberGuard implements CanActivate {
   public canActivate(context: ExecutionContext): boolean | Promise<boolean> {
     const request = context.switchToHttp().getRequest();

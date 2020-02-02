@@ -16,7 +16,7 @@ export class CommentReplyEntity {
     name: 'parentId',
     referencedColumnName: 'Id',
   })
-  public parentId: Number;
+  public parentId: number;
 
   @ManyToOne(
     type => CommentEntity,
@@ -29,5 +29,5 @@ export class CommentReplyEntity {
     name: 'childId',
     referencedColumnName: 'Id',
   })
-  public childId: Number;
+  public childId: number;
 }

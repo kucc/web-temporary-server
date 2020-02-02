@@ -9,10 +9,10 @@ export class UserResponseDTO {
     this.isAdmin = user.isAdmin;
     this.description = user.description;
   }
-  public readonly Id: Number;
-  public readonly email: String;
-  public readonly name: String;
-  public readonly nickname: String;
+  public readonly Id: number;
+  public readonly email: string;
+  public readonly name: string;
+  public readonly nickname: string;
   public readonly isAdmin: boolean;
-  public readonly description: String;
+  public readonly description: string;
 }

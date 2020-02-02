@@ -16,7 +16,7 @@ export class UserProjectEntity extends Base {
     name: 'userId',
     referencedColumnName: 'Id',
   })
-  public userId: Number;
+  public userId: number;
 
   @ManyToOne(
     type => ProjectEntity,
@@ -26,28 +26,28 @@ export class UserProjectEntity extends Base {
     name: 'projectId',
     referencedColumnName: 'Id',
   })
-  public projectId: Number;
+  public projectId: number;
 
   @Column({
     name: 'attendance',
     type: 'int',
     default: 0,
   })
-  public attendance: Number;
+  public attendance: number;
 
   @Column({
     name: 'late',
     type: 'int',
     default: 0,
   })
-  public late: Number;
+  public late: number;
 
   @Column({
     name: 'absense',
     type: 'int',
     default: 0,
   })
-  public absense: Number;
+  public absense: number;
 
   @OneToMany(
     type => UserProjectAttendanceEntity,

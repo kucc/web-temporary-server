@@ -49,12 +49,12 @@ export class EventEntity extends Base {
     user => user.events,
   )
   @JoinColumn({ name: 'userId', referencedColumnName: 'Id' })
-  public userId: Number;
+  public userId: number;
 
   @ManyToOne(
     type => EventTypeEntity,
     eventType => eventType.events,
   )
   @JoinColumn({ name: 'eventTypeId', referencedColumnName: 'Id' })
-  public eventTypeId: Number;
+  public eventTypeId: number;
 }

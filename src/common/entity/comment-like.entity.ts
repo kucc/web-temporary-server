@@ -17,7 +17,7 @@ export class CommentLikeEntity {
     name: 'commentId',
     referencedColumnName: 'Id',
   })
-  public commentId: Number;
+  public commentId: number;
 
   @ManyToOne(
     type => UserEntity,
@@ -30,5 +30,5 @@ export class CommentLikeEntity {
     name: 'userId',
     referencedColumnName: 'Id',
   })
-  public userId: Number;
+  public userId: number;
 }
