@@ -20,7 +20,7 @@ export class CommentEntity extends Base {
     type: 'int',
     default: 0,
   })
-  public likes: Number;
+  public likes: number;
 
   @ManyToOne(
     type => UserEntity,
@@ -30,7 +30,7 @@ export class CommentEntity extends Base {
     name: 'userId',
     referencedColumnName: 'Id',
   })
-  public userId: Number;
+  public userId: number;
 
   @OneToMany(
     type => CommentReplyEntity,
