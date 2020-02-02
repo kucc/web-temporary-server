@@ -26,6 +26,13 @@ export class UserProjectAttendanceEntity extends Base {
   })
   public description: string;
 
+  @Column({
+    name: 'userProjectId',
+    type: 'int',
+    nullable: false,
+  })
+  public userProjectId: number;
+
   @ManyToOne(
     type => UserProjectEntity,
     userProject => userProject.attendances,
@@ -35,5 +42,5 @@ export class UserProjectAttendanceEntity extends Base {
     name: 'userProjectId',
     referencedColumnName: 'Id',
   })
-  public userProjectId: number;
+  public userProject: UserProjectEntity;
 }

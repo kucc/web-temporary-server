@@ -8,10 +8,10 @@ export class ProjectResponseDTO {
     this.maxAttendance = project.maxAttendance;
     this.userId = project.userId;
   }
-  public readonly Id: Number;
+  public readonly Id: number;
   public readonly createdAt: Date;
   public readonly title: string;
   public readonly place: string;
-  public readonly maxAttendance: Number;
-  public readonly userId: Number;
+  public readonly maxAttendance: number;
+  public readonly userId: number;
 }

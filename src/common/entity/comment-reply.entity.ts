@@ -1,10 +1,18 @@
-import { Entity, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, ManyToOne, JoinColumn, Column } from 'typeorm';
 import { CommentEntity } from '../../comment/comment.entity';
 
 @Entity({
   name: 'CommentReplies',
 })
 export class CommentReplyEntity {
+  @Column({
+    name: 'parentId',
+    type: 'int',
+    nullable: false,
+    primary: true,
+  })
+  public parentId: number;
+
   @ManyToOne(
     type => CommentEntity,
     comment => comment.parent,
@@ -16,7 +24,15 @@ export class CommentReplyEntity {
     name: 'parentId',
     referencedColumnName: 'Id',
   })
-  public parentId: number;
+  public parent: CommentEntity;
+
+  @Column({
+    name: 'childId',
+    type: 'int',
+    nullable: false,
+    primary: true,
+  })
+  public childId: number;
 
   @ManyToOne(
     type => CommentEntity,
@@ -29,5 +45,5 @@ export class CommentReplyEntity {
     name: 'childId',
     referencedColumnName: 'Id',
   })
-  public childId: number;
+  public child: CommentEntity;
 }

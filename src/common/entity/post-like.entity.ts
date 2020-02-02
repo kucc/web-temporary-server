@@ -1,4 +1,4 @@
-import { Entity, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, ManyToOne, JoinColumn, Column } from 'typeorm';
 import { PostEntity } from '../../post/post.entity';
 import { UserEntity } from '../../user/user.entity';
 
@@ -6,6 +6,14 @@ import { UserEntity } from '../../user/user.entity';
   name: 'PostLikes',
 })
 export class PostLikeEntity {
+  @Column({
+    name: 'postId',
+    type: 'int',
+    nullable: false,
+    primary: true,
+  })
+  public postId: number;
+
   @ManyToOne(
     type => PostEntity,
     post => post.likedUsers,
@@ -17,7 +25,14 @@ export class PostLikeEntity {
     name: 'postId',
     referencedColumnName: 'Id',
   })
-  public postId: Number;
+  public post: PostEntity;
+
+  @Column({
+    name: 'userId',
+    type: 'int',
+    nullable: false,
+  })
+  public userId: number;
 
   @ManyToOne(
     type => UserEntity,
@@ -30,5 +45,5 @@ export class PostLikeEntity {
     name: 'userId',
     referencedColumnName: 'Id',
   })
-  public userId: Number;
+  public user: UserEntity;
 }

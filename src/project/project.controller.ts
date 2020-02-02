@@ -20,7 +20,7 @@ export class ProjectController {
 
   @Get(':Id')
   async getProjectById(
-    @Param('Id', ValidateIdPipe) Id: Number,
+    @Param('Id', ValidateIdPipe) Id: number,
   ): Promise<ProjectResponseDTO> {
     const Project = await this.projectService.findProjectById(Id);
     if (!Project) {
@@ -43,7 +43,7 @@ export class ProjectController {
 
   @Put(':Id')
   async putProjectInfo(
-    @Param('Id', ValidateIdPipe) Id: Number,
+    @Param('Id', ValidateIdPipe) Id: number,
     @Body() projectRequestDTO: ProjectRequestDTO,
   ): Promise<ProjectResponseDTO> {
     const Project = await this.projectService.changeProjectInfo(
@@ -55,7 +55,7 @@ export class ProjectController {
 
   @Delete(':Id')
   @HttpCode(204)
-  async deleteProjectById(@Param('Id', ValidateIdPipe) Id: Number) {
+  async deleteProjectById(@Param('Id', ValidateIdPipe) Id: number) {
     const Project = await this.projectService.findProjectById(Id);
     if (!Project) {
       throw new NotFoundException(

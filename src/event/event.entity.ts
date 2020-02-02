@@ -44,17 +44,31 @@ export class EventEntity extends Base {
   })
   public place: boolean;
 
+  @Column({
+    name: 'userId',
+    type: 'int',
+    nullable: false,
+  })
+  public userId: number;
+
   @ManyToOne(
     type => UserEntity,
     user => user.events,
   )
   @JoinColumn({ name: 'userId', referencedColumnName: 'Id' })
-  public userId: number;
+  public user: UserEntity;
+
+  @Column({
+    name: 'eventTypeId',
+    type: 'int',
+    nullable: true,
+  })
+  public eventTypeId: number;
 
   @ManyToOne(
     type => EventTypeEntity,
     eventType => eventType.events,
   )
   @JoinColumn({ name: 'eventTypeId', referencedColumnName: 'Id' })
-  public eventTypeId: number;
+  public eventType: EventTypeEntity;
 }

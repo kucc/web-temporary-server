@@ -40,7 +40,7 @@ export class UserController {
 
   @Get('/:Id')
   async getUserById(
-    @Param('Id', ValidateIdPipe) Id: Number,
+    @Param('Id', ValidateIdPipe) Id: number,
   ): Promise<UserResponseDTO> {
     const User = await this.userService.findUserById(Id);
 

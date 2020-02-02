@@ -12,7 +12,7 @@ export class ProjectService {
     private readonly projectRepository: Repository<ProjectEntity>,
   ) {}
 
-  public async findProjectById(Id: Number): Promise<ProjectEntity> {
+  public async findProjectById(Id: number): Promise<ProjectEntity> {
     const Project = await this.projectRepository.findOne({
       where: {
         Id,
@@ -32,7 +32,7 @@ export class ProjectService {
   }
 
   public async changeProjectInfo(
-    Id: Number,
+    Id: number,
     projectRequestDTO: ProjectRequestDTO,
   ): Promise<ProjectEntity> {
     const Project = await this.findProjectById(Id);
@@ -42,7 +42,7 @@ export class ProjectService {
     return newProject;
   }
 
-  public async deleteProjectById(Id: Number) {
+  public async deleteProjectById(Id: number) {
     const deletedProject = await this.findProjectById(Id);
     deletedProject.status = false;
     await this.projectRepository.save(deletedProject);
