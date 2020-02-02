@@ -17,7 +17,7 @@ export class AuthService {
       { data: userResponse },
       process.env.JWT_SECRET,
       {
-        expiresIn: number(process.env.JWT_EXPIRATION),
+        expiresIn: Number(process.env.JWT_EXPIRATION),
       },
     );
 
