@@ -1,15 +1,9 @@
-import {
-  Entity,
-  Column,
-  ManyToOne,
-  JoinTable,
-  JoinColumn,
-  OneToMany,
-} from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+
+import { UserEntity } from '../user/user.entity';
 import { Base } from '../common/entity/base.entity';
 import { PostTypeEntity } from '../common/entity/post-type.entity';
 import { PostLikeEntity } from '../common/entity/post-like.entity';
-import { UserEntity } from '../user/user.entity';
 
 @Entity({
   name: 'Posts',

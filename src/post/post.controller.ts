@@ -13,7 +13,6 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 
-import { PostEntity } from './post.entity';
 import { PostService } from './post.service';
 import { CreatePostBodyDTO } from './dto/create-post-body.dto';
 import { ValidateIdPipe } from '../common/pipe/validate-id.pipe';
