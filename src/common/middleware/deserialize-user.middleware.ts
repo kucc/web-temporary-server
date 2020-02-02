@@ -25,10 +25,14 @@ export class DeserializeUserMiddleWare implements NestMiddleware {
       return next();
     }
 
-    const { data }: any = jwt.verify(accessToken, process.env.JWT_SECRET);
+    try {
+      const { data }: any = jwt.verify(accessToken, process.env.JWT_SECRET);
 
-    if (data) {
-      request.user = data;
+      if (data) {
+        request.user = data;
+      }
+    } catch (e) {
+      response.clearCookie('accessToken');
     }
 
     return next();
