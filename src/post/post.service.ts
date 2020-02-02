@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PostEntity } from './post.entity';
 import { Repository } from 'typeorm';
-import { PostRequestDTO } from './dto/post-request.dto';
+
+import { PostEntity } from './post.entity';
+import { CreatePostBodyDTO } from './dto/create-post-body.dto';
 
 @Injectable()
 export class PostService {
@@ -16,30 +17,32 @@ export class PostService {
       where: {
         Id,
       },
-      relations: ['postTypeId'],
     });
   }
 
-  public async createPost(postRequestDTO: PostRequestDTO): Promise<PostEntity> {
-    // TODO:
-    // get the userId of writer, and save it together
-
-    const Post = await this.postRepository.create(postRequestDTO);
+  public async createPost(
+    userId: number,
+    createPostBodyDTO: CreatePostBodyDTO,
+  ): Promise<PostEntity> {
+    createPostBodyDTO.userId = userId;
+    const Post = this.postRepository.create(createPostBodyDTO);
     await this.postRepository.save(Post);
+
     return Post;
   }
+
+  public async deletePost(postId: number) {
+    await this.postRepository.update(postId, { status: false });
+
+    return { return: true };
+  }
+
   public async findPostsByPage(
     page: number,
     sort: string = 'desc',
   ): Promise<PostEntity[]> {
     // TODO:
-    // 1. 한 페이지에 보여줄 게시물 갯수 논의 (viewCount)
-    // 2. algorithm
-    //  N = 총 게시물 수(status가 true인 게시물 수)
-    //  p = page(query parameter)
-    //  pageCount = ceiling(N / viewCount)
-    //  p > pageCount: invalid error
-    //
+    //  ORM methods
     //  createdAt 기준 정렬,
     //  if N <= viewCount:
     //    [1, N] 리턴
