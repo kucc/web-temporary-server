@@ -1,4 +1,4 @@
-import { Entity, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, ManyToOne, JoinColumn, Column } from 'typeorm';
 import { CommentEntity } from '../../comment/comment.entity';
 import { UserEntity } from '../../user/user.entity';
 
@@ -6,6 +6,14 @@ import { UserEntity } from '../../user/user.entity';
   name: 'CommentLikes',
 })
 export class CommentLikeEntity {
+  @Column({
+    name: 'commentId',
+    type: 'int',
+    nullable: false,
+    primary: true,
+  })
+  public commentId: number;
+
   @ManyToOne(
     type => CommentEntity,
     comment => comment.likedUsers,
@@ -17,7 +25,15 @@ export class CommentLikeEntity {
     name: 'commentId',
     referencedColumnName: 'Id',
   })
-  public commentId: number;
+  public comment: CommentEntity;
+
+  @Column({
+    name: 'userId',
+    type: 'int',
+    nullable: false,
+    primary: true,
+  })
+  public userId: number;
 
   @ManyToOne(
     type => UserEntity,
@@ -30,5 +46,5 @@ export class CommentLikeEntity {
     name: 'userId',
     referencedColumnName: 'Id',
   })
-  public userId: number;
+  public user: UserEntity;
 }

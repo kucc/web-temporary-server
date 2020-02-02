@@ -32,11 +32,12 @@ export class ProjectEntity extends Base {
   })
   public maxAttendance: number;
 
-  @OneToMany(
-    type => UserProjectEntity,
-    userProject => userProject.projectId,
-  )
-  public userProjects: UserProjectEntity[];
+  @Column({
+    name: 'userId',
+    type: 'int',
+    nullable: false,
+  })
+  public userId: number;
 
   @ManyToOne(
     type => UserEntity,
@@ -46,5 +47,11 @@ export class ProjectEntity extends Base {
     name: 'userId',
     referencedColumnName: 'Id',
   })
-  public userId: number;
+  public user: UserEntity;
+
+  @OneToMany(
+    type => UserProjectEntity,
+    userProject => userProject.projectId,
+  )
+  public userProjects: UserProjectEntity[];
 }

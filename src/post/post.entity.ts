@@ -35,7 +35,14 @@ export class PostEntity extends Base {
     type: 'int',
     default: 0,
   })
-  public likes: Number;
+  public likes: number;
+
+  @Column({
+    name: 'postTypeId',
+    type: 'int',
+    nullable: false,
+  })
+  public postTypeId: number;
 
   @ManyToOne(
     type => PostTypeEntity,
@@ -45,7 +52,14 @@ export class PostEntity extends Base {
     name: 'postTypeId',
     referencedColumnName: 'Id',
   })
-  public postTypeId: Number;
+  public postType: PostTypeEntity;
+
+  @Column({
+    name: 'userId',
+    type: 'int',
+    nullable: false,
+  })
+  public userId: number;
 
   @ManyToOne(
     type => UserEntity,
@@ -55,7 +69,7 @@ export class PostEntity extends Base {
     name: 'userId',
     referencedColumnName: 'Id',
   })
-  public userId: Number;
+  public user: UserEntity;
 
   @OneToMany(
     type => PostLikeEntity,
