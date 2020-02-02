@@ -1,6 +1,6 @@
-import { IsNotEmpty, IsNumber } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsEmpty } from 'class-validator';
 
-export class PostRequestDTO {
+export class CreatePostBodyDTO {
   @IsNotEmpty()
   public readonly title: string;
 
@@ -10,4 +10,7 @@ export class PostRequestDTO {
   @IsNumber()
   @IsNotEmpty()
   public readonly postTypeId: number;
+
+  @IsEmpty()
+  public userId: number;
 }
