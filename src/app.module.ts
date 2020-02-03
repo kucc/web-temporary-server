@@ -9,7 +9,6 @@ import { ProjectModule } from './project/project.module';
 import { UserProjectModule } from './user-project/user-project.module';
 import { DeserializeUserMiddleWare } from './common/middleware/deserialize-user.middleware';
 import { PostModule } from './post/post.module';
-import { PostLikeModule } from './post-like/post-like.module';
 
 @Module({
   imports: [
