@@ -4,6 +4,7 @@ import {
   JoinColumn,
   Column,
   PrimaryGeneratedColumn,
+  Unique,
 } from 'typeorm';
 import { PostEntity } from '../post/post.entity';
 import { UserEntity } from '../user/user.entity';
@@ -11,6 +12,7 @@ import { UserEntity } from '../user/user.entity';
 @Entity({
   name: 'PostLikes',
 })
+@Unique(['postId', 'userId'])
 export class PostLikeEntity {
   @PrimaryGeneratedColumn({
     name: 'id',
