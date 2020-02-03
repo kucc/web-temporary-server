@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ProjectResponseDTO } from './dto/project-response.dto';
 import { ProjectRequestDTO } from './dto/project-request.dto';
+import { ProjectUpdateRequestDTO } from './dto/project-update-request.dto';
 
 @Injectable()
 export class ProjectService {
@@ -33,12 +34,15 @@ export class ProjectService {
     return Project;
   }
 
-  public async changeProjectInfo(
+  public async updateProject(
     Id: number,
-    projectRequestDTO: ProjectRequestDTO,
+    projectUpdateRequestDTO: ProjectUpdateRequestDTO,
   ): Promise<ProjectEntity> {
     const Project = await this.findProjectById(Id);
-    const newProject = this.projectRepository.merge(Project, projectRequestDTO);
+    const newProject = this.projectRepository.merge(
+      Project,
+      projectUpdateRequestDTO,
+    );
 
     await this.projectRepository.save(newProject);
     return newProject;
