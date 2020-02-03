@@ -25,8 +25,10 @@ export class ProjectService {
 
   public async createNewProject(
     projectRequestDTO: ProjectRequestDTO,
+    userId: number,
   ): Promise<ProjectEntity> {
-    const Project = await this.projectRepository.create(projectRequestDTO);
+    projectRequestDTO.userId = userId;
+    const Project = this.projectRepository.create(projectRequestDTO);
     await this.projectRepository.save(Project);
     return Project;
   }
