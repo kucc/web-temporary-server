@@ -1,6 +1,6 @@
 import { IsNotEmpty, Length, Max, IsNumber } from 'class-validator';
 
-export class ProjectUpdateRequestDTO {
+export class UpdateProjectRequestDTO {
   @IsNotEmpty()
   @Length(100)
   public readonly title: string;

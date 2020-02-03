@@ -1,10 +1,10 @@
-import { Injectable } from '@nestjs/common';
-import { ProjectEntity } from './project.entity';
-import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ProjectResponseDTO } from './dto/project-response.dto';
+import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+
+import { ProjectEntity } from './project.entity';
 import { ProjectRequestDTO } from './dto/project-request.dto';
-import { ProjectUpdateRequestDTO } from './dto/project-update-request.dto';
+import { UpdateProjectRequestDTO } from './dto/project-update-request.dto';
 
 @Injectable()
 export class ProjectService {
@@ -36,12 +36,12 @@ export class ProjectService {
 
   public async updateProject(
     Id: number,
-    projectUpdateRequestDTO: ProjectUpdateRequestDTO,
+    updateProjectRequestDTO: UpdateProjectRequestDTO,
   ): Promise<ProjectEntity> {
     const Project = await this.findProjectById(Id);
     const newProject = this.projectRepository.merge(
       Project,
-      projectUpdateRequestDTO,
+      updateProjectRequestDTO,
     );
 
     await this.projectRepository.save(newProject);
