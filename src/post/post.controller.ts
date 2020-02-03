@@ -92,6 +92,10 @@ export class PostController {
       throw new NotFoundException(`${Id}번 Post가 존재하지 않습니다.`);
     }
 
+    if (!Post.status) {
+      throw new NotFoundException('삭제된 Post입니다.');
+    }
+
     const toggleResult = await this.postLikeService.toggleLikes(
       Id,
       request.user.Id,
