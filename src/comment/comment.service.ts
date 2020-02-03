@@ -12,6 +12,14 @@ export class CommentService {
     private readonly commentRepository: Repository<CommentEntity>,
   ) {}
 
+  public async findCommentById(Id: number): Promise<CommentEntity> {
+    return await this.commentRepository.findOne({
+      where: {
+        Id,
+      },
+    });
+  }
+
   public async createComment(
     postId: number,
     userId: number,
@@ -24,5 +32,11 @@ export class CommentService {
     await this.commentRepository.save(Comment);
 
     return Comment;
+  }
+
+  public async deleteComment(Id: number) {
+    await this.commentRepository.update(Id, { status: false });
+
+    return { return: true };
   }
 }
