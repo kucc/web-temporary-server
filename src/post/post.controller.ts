@@ -13,16 +13,19 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 
-import { PostEntity } from './post.entity';
 import { PostService } from './post.service';
 import { CreatePostBodyDTO } from './dto/create-post-body.dto';
 import { ValidateIdPipe } from '../common/pipe/validate-id.pipe';
 import { GetPostResponseDTO } from './dto/get-post-response.dto';
+import { PostLikeService } from '../post-like/post-like.service';
 import { OnlyMemberGuard } from '../common/guards/only-member.guard';
 
 @Controller('post')
 export class PostController {
-  public constructor(private readonly postService: PostService) {}
+  public constructor(
+    private readonly postService: PostService,
+    private readonly postLikeService: PostLikeService,
+  ) {}
 
   @Get(':Id')
   async getPostById(
@@ -72,6 +75,35 @@ export class PostController {
 
     return { result: true };
   }
+
+  @Post(':Id/like')
+  @UseGuards(OnlyMemberGuard)
+  async updateLikes(
+    @Param('Id', ValidateIdPipe) Id: number,
+    @Req() request: Request,
+  ) {
+    const Post = await this.postService.findPostById(Id);
+
+    if (!Post) {
+      throw new NotFoundException(`${Id}번 Post가 존재하지 않습니다.`);
+    }
+
+    const toggleResult = await this.postLikeService.toggleLikes(
+      Id,
+      request.user.Id,
+    );
+
+    try {
+      toggleResult
+        ? this.postService.incrementLikes(Id)
+        : this.postService.decrementLikes(Id);
+    } catch (e) {
+      return { return: false };
+    }
+
+    return { return: true };
+  }
+
   async getPostsByPage(
     @Query('page') page: number,
     @Query('sort') sort: string,

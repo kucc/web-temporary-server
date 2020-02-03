@@ -1,6 +1,6 @@
+import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
 
 import { PostEntity } from './post.entity';
 import { CreatePostBodyDTO } from './dto/create-post-body.dto';
@@ -31,8 +31,19 @@ export class PostService {
     return Post;
   }
 
-  public async deletePost(postId: number) {
-    await this.postRepository.update(postId, { status: false });
+  public async deletePost(Id: number) {
+    await this.postRepository.update(Id, { status: false });
+
+    return { return: true };
+  }
+
+  public async incrementLikes(Id: number) {
+    await this.postRepository.increment({ Id }, 'likes', 1);
+
+    return { return: true };
+  }
+  public async decrementLikes(Id: number) {
+    await this.postRepository.decrement({ Id }, 'likes', 1);
 
     return { return: true };
   }
