@@ -1,4 +1,10 @@
-import { Entity, ManyToOne, JoinColumn, Column } from 'typeorm';
+import {
+  Entity,
+  ManyToOne,
+  JoinColumn,
+  Column,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { PostEntity } from '../post/post.entity';
 import { UserEntity } from '../user/user.entity';
 
@@ -6,20 +12,22 @@ import { UserEntity } from '../user/user.entity';
   name: 'PostLikes',
 })
 export class PostLikeEntity {
+  @PrimaryGeneratedColumn({
+    name: 'id',
+    type: 'int',
+  })
+  public Id: number;
+
   @Column({
     name: 'postId',
     type: 'int',
     nullable: false,
-    primary: true,
   })
   public postId: number;
 
   @ManyToOne(
     type => PostEntity,
     post => post.likedUsers,
-    {
-      primary: true,
-    },
   )
   @JoinColumn({
     name: 'postId',
@@ -37,9 +45,6 @@ export class PostLikeEntity {
   @ManyToOne(
     type => UserEntity,
     user => user.likedPosts,
-    {
-      primary: true,
-    },
   )
   @JoinColumn({
     name: 'userId',

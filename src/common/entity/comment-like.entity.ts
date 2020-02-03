@@ -1,4 +1,10 @@
-import { Entity, ManyToOne, JoinColumn, Column } from 'typeorm';
+import {
+  Entity,
+  ManyToOne,
+  JoinColumn,
+  Column,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { CommentEntity } from '../../comment/comment.entity';
 import { UserEntity } from '../../user/user.entity';
 
@@ -6,20 +12,22 @@ import { UserEntity } from '../../user/user.entity';
   name: 'CommentLikes',
 })
 export class CommentLikeEntity {
+  @PrimaryGeneratedColumn({
+    name: 'id',
+    type: 'int',
+  })
+  public Id: number;
+
   @Column({
     name: 'commentId',
     type: 'int',
     nullable: false,
-    primary: true,
   })
   public commentId: number;
 
   @ManyToOne(
     type => CommentEntity,
     comment => comment.likedUsers,
-    {
-      primary: true,
-    },
   )
   @JoinColumn({
     name: 'commentId',
@@ -31,16 +39,12 @@ export class CommentLikeEntity {
     name: 'userId',
     type: 'int',
     nullable: false,
-    primary: true,
   })
   public userId: number;
 
   @ManyToOne(
     type => UserEntity,
     user => user.likedComments,
-    {
-      primary: true,
-    },
   )
   @JoinColumn({
     name: 'userId',
