@@ -64,6 +64,12 @@ export class ProjectController {
 
     let Project = await this.projectService.findProjectById(Id);
 
+    if (!Project) {
+      throw new NotFoundException(
+        `Id가 ${Id}에 해당하는 프로젝트가 존재하지 않습니다.`,
+      );
+    }
+
     if (Project.userId !== userId) {
       throw new NotFoundException('유효하지 않은 접근입니다.');
     }
@@ -78,16 +84,29 @@ export class ProjectController {
 
   @Delete(':Id')
   @UseGuards(OnlyMemberGuard)
-  async deleteProjectById(@Param('Id', ValidateIdPipe) Id: number) {
-    const Project = await this.projectService.findProjectById(Id);
+  async deleteProjectById(
+    @Param('Id', ValidateIdPipe) Id: number,
+    @Req() req: Request,
+  ) {
+    const userId = req.user.Id;
+
+    let Project = await this.projectService.findProjectById(Id);
     if (!Project) {
       throw new NotFoundException(
         `Id가 ${Id}에 해당하는 프로젝트가 존재하지 않습니다.`,
       );
     }
 
-    this.projectService.deleteProjectById(Id);
+    if (Project.userId !== userId) {
+      throw new NotFoundException('유효하지 않은 접근입니다.');
+    }
 
-    return '삭제되었습니다.';
+    try {
+      this.projectService.deleteProjectById(Id);
+    } catch (e) {
+      return { result: false };
+    }
+
+    return { result: true };
   }
 }
