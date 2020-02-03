@@ -1,7 +1,8 @@
-import { IsNotEmpty, IsNumber, IsEmpty } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsEmpty, MaxLength } from 'class-validator';
 
 export class CreatePostBodyDTO {
   @IsNotEmpty()
+  @MaxLength(100)
   public readonly title: string;
 
   @IsNotEmpty()
