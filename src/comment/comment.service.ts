@@ -39,4 +39,16 @@ export class CommentService {
 
     return { return: true };
   }
+
+  public async incrementLikes(Id: number) {
+    await this.commentRepository.increment({ Id }, 'likes', 1);
+
+    return { return: true };
+  }
+
+  public async decrementLikes(Id: number) {
+    await this.commentRepository.decrement({ Id }, 'likes', 1);
+
+    return { return: true };
+  }
 }
