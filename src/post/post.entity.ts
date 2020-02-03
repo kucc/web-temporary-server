@@ -1,15 +1,10 @@
-import {
-  Entity,
-  Column,
-  ManyToOne,
-  JoinTable,
-  JoinColumn,
-  OneToMany,
-} from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
+
+import { UserEntity } from '../user/user.entity';
 import { Base } from '../common/entity/base.entity';
 import { PostTypeEntity } from '../common/entity/post-type.entity';
-import { PostLikeEntity } from '../common/entity/post-like.entity';
-import { UserEntity } from '../user/user.entity';
+import { PostLikeEntity } from '../post-like/post-like.entity';
+import { CommentEntity } from '../comment/comment.entity';
 
 @Entity({
   name: 'Posts',
@@ -76,4 +71,10 @@ export class PostEntity extends Base {
     postLike => postLike.postId,
   )
   public likedUsers: PostLikeEntity[];
+
+  @OneToMany(
+    type => CommentEntity,
+    comment => comment.postId,
+  )
+  public comments: CommentEntity[];
 }
