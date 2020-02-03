@@ -3,7 +3,7 @@ import { Entity, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { UserEntity } from '../user/user.entity';
 import { Base } from '../common/entity/base.entity';
 import { PostTypeEntity } from '../common/entity/post-type.entity';
-import { PostLikeEntity } from '../common/entity/post-like.entity';
+import { PostLikeEntity } from '../post-like/post-like.entity';
 
 @Entity({
   name: 'Posts',

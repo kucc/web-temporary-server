@@ -1,6 +1,6 @@
 import { Entity, ManyToOne, JoinColumn, Column } from 'typeorm';
-import { PostEntity } from '../../post/post.entity';
-import { UserEntity } from '../../user/user.entity';
+import { PostEntity } from '../post/post.entity';
+import { UserEntity } from '../user/user.entity';
 
 @Entity({
   name: 'PostLikes',
