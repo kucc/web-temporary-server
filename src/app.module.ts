@@ -10,7 +10,7 @@ import { UserProjectModule } from './user-project/user-project.module';
 import { DeserializeUserMiddleWare } from './common/middleware/deserialize-user.middleware';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(), UserModule, AuthModule, ProjectModule, UserProjectModule],
+  imports: [TypeOrmModule.forRoot(), UserModule, AuthModule, ProjectModule],
   controllers: [AppController],
   providers: [AppService],
 })
