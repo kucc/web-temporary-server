@@ -14,17 +14,21 @@ import {
 import { Request } from 'express';
 
 import { PostService } from './post.service';
+import { CommentService } from '../comment/comment.service';
 import { CreatePostBodyDTO } from './dto/create-post-body.dto';
 import { ValidateIdPipe } from '../common/pipe/validate-id.pipe';
 import { GetPostResponseDTO } from './dto/get-post-response.dto';
 import { PostLikeService } from '../post-like/post-like.service';
 import { OnlyMemberGuard } from '../common/guards/only-member.guard';
+import { CreateCommentBodyDTO } from '../comment/dto/create-comment-body.dto';
+import { GetCommentResponseDTO } from '../comment/dto/get-comment-response.dto';
 
 @Controller('post')
 export class PostController {
   public constructor(
     private readonly postService: PostService,
     private readonly postLikeService: PostLikeService,
+    private readonly commentService: CommentService,
   ) {}
 
   @Get(':Id')
@@ -102,6 +106,30 @@ export class PostController {
     }
 
     return { return: true };
+  }
+
+  @Post(':Id/comment')
+  @UseGuards(OnlyMemberGuard)
+  async createComment(
+    @Param('Id', ValidateIdPipe) Id: number,
+    @Body() createCommentBodyDTO: CreateCommentBodyDTO,
+    @Req() request: Request,
+  ): Promise<GetCommentResponseDTO> {
+    const Post = await this.postService.findPostById(Id);
+
+    if (!Post) {
+      throw new NotFoundException(`${Id}번 Post가 존재하지 않습니다.`);
+    }
+
+    const userId = request.user.Id;
+
+    const Comment = await this.commentService.createComment(
+      Id,
+      userId,
+      createCommentBodyDTO,
+    );
+
+    return new GetCommentResponseDTO(Comment);
   }
 
   async getPostsByPage(
