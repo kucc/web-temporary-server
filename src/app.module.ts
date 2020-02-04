@@ -19,7 +19,6 @@ import { PostLikeModule } from './post-like/post-like.module';
     ProjectModule,
     UserProjectModule,
     PostModule,
-    PostLikeModule,
   ],
   controllers: [AppController],
   providers: [AppService],
