@@ -43,7 +43,10 @@ export class PostController {
       throw new NotFoundException(`${Id}번 Post가 존재하지 않습니다.`);
     }
 
-    return new GetPostResponseDTO(Post);
+    await this.postService.incrementViews(Id);
+    const newPost = await this.postService.findPostById(Id);
+
+    return new GetPostResponseDTO(newPost);
   }
 
   @Post('')

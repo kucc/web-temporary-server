@@ -59,6 +59,12 @@ export class PostService {
     return { return: true };
   }
 
+  public async incrementViews(Id: number) {
+    await this.postRepository.increment({ Id }, 'views', 1);
+
+    return { return: true };
+  }
+
   public async findPostsByPage(
     page: number,
     sort: string = 'desc',
