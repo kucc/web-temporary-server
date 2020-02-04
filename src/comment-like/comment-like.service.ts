@@ -11,6 +11,20 @@ export class CommentLikeService {
     private readonly commentLikeRepository: Repository<CommentLikeEntity>,
   ) {}
 
+  public async findEntity(commentId: number, userId: number): Promise<boolean> {
+    const CommentLike = await this.commentLikeRepository.findOne({
+      where: {
+        commentId,
+        userId,
+      },
+    });
+
+    if (!CommentLike) {
+      return false;
+    }
+    return true;
+  }
+
   public async toggleLikes(
     commentId: number,
     userId: number,

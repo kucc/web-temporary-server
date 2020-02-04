@@ -7,6 +7,7 @@ import {
   UseGuards,
   Delete,
   NotAcceptableException,
+  Get,
 } from '@nestjs/common';
 import { Request } from 'express';
 
@@ -47,6 +48,29 @@ export class CommentController {
     return { result: true };
   }
 
+  @Get(':Id/like')
+  @UseGuards(OnlyMemberGuard)
+  async getLikeOfUser(
+    @Param('Id', ValidateIdPipe) Id: number,
+    @Req() request: Request,
+  ): Promise<boolean> {
+    const Comment = await this.commentService.findCommentById(Id);
+
+    if (!Comment) {
+      throw new NotFoundException(`${Id}번 Comment가 존재하지 않습니다.`);
+    }
+
+    if (!Comment.status) {
+      throw new NotFoundException('삭제된 Comment입니다.');
+    }
+
+    const IsLiked = await this.commentLikeService.findEntity(
+      Comment.Id,
+      request.user.Id,
+    );
+
+    return IsLiked;
+  }
   @Post(':Id/like')
   @UseGuards(OnlyMemberGuard)
   async updateLikes(
