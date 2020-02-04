@@ -80,6 +80,30 @@ export class PostController {
     return { result: true };
   }
 
+  @Get(':Id/like')
+  @UseGuards(OnlyMemberGuard)
+  async getLikeOfUser(
+    @Param('Id', ValidateIdPipe) Id: number,
+    @Req() request: Request,
+  ): Promise<boolean> {
+    const Post = await this.postService.findPostById(Id);
+
+    if (!Post) {
+      throw new NotFoundException(`${Id}번 Post가 존재하지 않습니다.`);
+    }
+
+    if (!Post.status) {
+      throw new NotFoundException('삭제된 Post입니다.');
+    }
+
+    const IsLiked = await this.postLikeService.findEntity(
+      Post.Id,
+      request.user.Id,
+    );
+
+    return IsLiked;
+  }
+
   @Post(':Id/like')
   @UseGuards(OnlyMemberGuard)
   async updateLikes(
