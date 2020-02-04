@@ -10,10 +10,12 @@ import {
   UseGuards,
   Delete,
   NotAcceptableException,
+  Put,
 } from '@nestjs/common';
 import { Request } from 'express';
 
 import { PostService } from './post.service';
+import { EditPostBodyDTO } from './dto/edit-post-body.dto';
 import { CommentService } from '../comment/comment.service';
 import { CreatePostBodyDTO } from './dto/create-post-body.dto';
 import { ValidateIdPipe } from '../common/pipe/validate-id.pipe';
@@ -53,6 +55,31 @@ export class PostController {
     const userId = request.user.Id;
     const Post = await this.postService.createPost(userId, createPostBodyDTO);
     return new GetPostResponseDTO(Post);
+  }
+
+  @Put(':Id')
+  @UseGuards(OnlyMemberGuard)
+  async editPost(
+    @Param('Id', ValidateIdPipe) Id: number,
+    @Body() editPostBodyDTO: EditPostBodyDTO,
+    @Req() request: Request,
+  ): Promise<GetPostResponseDTO> {
+    const Post = await this.postService.findPostById(Id);
+
+    if (!Post) {
+      throw new NotFoundException(`${Id}번 Post가 존재하지 않습니다.`);
+    }
+
+    if (!Post.status) {
+      throw new NotFoundException('삭제된 Post입니다.');
+    }
+
+    if (Post.userId !== request.user.Id) {
+      throw new NotAcceptableException('유효하지 않은 접근입니다.');
+    }
+
+    const newPost = await this.postService.editPost(Post, editPostBodyDTO);
+    return new GetPostResponseDTO(newPost);
   }
 
   @Delete(':Id')

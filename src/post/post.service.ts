@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { PostEntity } from './post.entity';
+import { EditPostBodyDTO } from './dto/edit-post-body.dto';
 import { CreatePostBodyDTO } from './dto/create-post-body.dto';
 
 @Injectable()
@@ -29,6 +30,16 @@ export class PostService {
     await this.postRepository.save(Post);
 
     return Post;
+  }
+
+  public async editPost(
+    Post: PostEntity,
+    editPostBodyDTO: EditPostBodyDTO,
+  ): Promise<PostEntity> {
+    const newPost = this.postRepository.merge(Post, editPostBodyDTO);
+    await this.postRepository.save(newPost);
+
+    return newPost;
   }
 
   public async deletePost(Id: number) {
