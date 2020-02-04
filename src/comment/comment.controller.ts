@@ -8,12 +8,16 @@ import {
   Delete,
   NotAcceptableException,
   Get,
+  Put,
+  Body,
 } from '@nestjs/common';
 import { Request } from 'express';
 
 import { CommentService } from './comment.service';
 import { ValidateIdPipe } from '../common/pipe/validate-id.pipe';
+import { EditCommentBodyDTO } from './dto/edit-comment-body.dto';
 import { OnlyMemberGuard } from '../common/guards/only-member.guard';
+import { GetCommentResponseDTO } from './dto/get-comment-response.dto';
 import { CommentLikeService } from '../comment-like/comment-like.service';
 
 @Controller('comment')
@@ -22,6 +26,35 @@ export class CommentController {
     private readonly commentService: CommentService,
     private readonly commentLikeService: CommentLikeService,
   ) {}
+
+  @Put(':Id')
+  @UseGuards(OnlyMemberGuard)
+  async editComment(
+    @Param('Id', ValidateIdPipe) Id: number,
+    @Body() editCommentBodyDTO: EditCommentBodyDTO,
+    @Req() request: Request,
+  ): Promise<GetCommentResponseDTO> {
+    const Comment = await this.commentService.findCommentById(Id);
+
+    if (!Comment) {
+      throw new NotFoundException(`${Id}번 Comment가 존재하지 않습니다.`);
+    }
+
+    if (!Comment.status) {
+      throw new NotFoundException('삭제된 Comment입니다.');
+    }
+
+    if (Comment.userId !== request.user.Id) {
+      throw new NotAcceptableException('유효하지 않은 접근입니다.');
+    }
+
+    const newComment = await this.commentService.editComment(
+      Comment,
+      editCommentBodyDTO,
+    );
+
+    return new GetCommentResponseDTO(newComment);
+  }
 
   @Delete(':Id')
   @UseGuards(OnlyMemberGuard)
