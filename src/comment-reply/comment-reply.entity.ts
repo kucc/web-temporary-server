@@ -5,7 +5,8 @@ import {
   Column,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { CommentEntity } from '../../comment/comment.entity';
+
+import { CommentEntity } from '../comment/comment.entity';
 
 @Entity({
   name: 'CommentReplies',
