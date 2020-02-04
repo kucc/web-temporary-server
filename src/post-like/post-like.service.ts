@@ -11,7 +11,10 @@ export class PostLikeService {
     private readonly postLikeRepository: Repository<PostLikeEntity>,
   ) {}
 
-  public async findEntity(postId: number, userId: number): Promise<boolean> {
+  public async checkUserLikedPost(
+    postId: number,
+    userId: number,
+  ): Promise<boolean> {
     const PostLike = await this.postLikeRepository.findOne({
       where: {
         postId,

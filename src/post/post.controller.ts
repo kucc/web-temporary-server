@@ -96,12 +96,12 @@ export class PostController {
       throw new NotAcceptableException('삭제된 Post입니다.');
     }
 
-    const IsLiked = await this.postLikeService.findEntity(
+    const isLiked = await this.postLikeService.checkUserLikedPost(
       Post.Id,
       request.user.Id,
     );
 
-    return IsLiked;
+    return isLiked;
   }
 
   @Post(':Id/like')
