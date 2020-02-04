@@ -7,6 +7,7 @@ import {
   UseGuards,
   Delete,
   NotAcceptableException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Request } from 'express';
 
@@ -35,7 +36,7 @@ export class CommentController {
     }
 
     if (Comment.userId !== request.user.Id) {
-      throw new NotAcceptableException('당신이 쓴 댓글이 아니다!!!!!');
+      throw new UnauthorizedException('유효하지 않은 접근입니다.');
     }
 
     try {
@@ -60,7 +61,7 @@ export class CommentController {
     }
 
     if (!Comment.status) {
-      throw new NotFoundException('삭제된 Comment입니다.');
+      throw new NotAcceptableException('삭제된 Comment입니다.');
     }
 
     const toggleResult = await this.commentLikeService.toggleLikes(

@@ -93,7 +93,7 @@ export class PostController {
     }
 
     if (!Post.status) {
-      throw new NotFoundException('삭제된 Post입니다.');
+      throw new NotAcceptableException('삭제된 Post입니다.');
     }
 
     const IsLiked = await this.postLikeService.findEntity(
@@ -117,7 +117,7 @@ export class PostController {
     }
 
     if (!Post.status) {
-      throw new NotFoundException('삭제된 Post입니다.');
+      throw new NotAcceptableException('삭제된 Post입니다.');
     }
 
     const toggleResult = await this.postLikeService.toggleLikes(
