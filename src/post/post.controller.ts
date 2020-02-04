@@ -102,7 +102,7 @@ export class PostController {
     }
 
     try {
-      this.postService.deletePost(Id);
+      await this.postService.deletePost(Id);
     } catch (e) {
       return { result: false };
     }
@@ -157,8 +157,8 @@ export class PostController {
 
     try {
       toggleResult
-        ? this.postService.incrementLikes(Id)
-        : this.postService.decrementLikes(Id);
+        ? await this.postService.incrementLikes(Id)
+        : await this.postService.decrementLikes(Id);
     } catch (e) {
       return { return: false };
     }
@@ -194,6 +194,6 @@ export class PostController {
     @Query('page') page: number,
     @Query('sort') sort: string,
   ) {
-    return this.postService.findPostsByPage(page, sort);
+    return await this.postService.findPostsByPage(page, sort);
   }
 }
