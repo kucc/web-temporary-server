@@ -20,6 +20,7 @@ import { CommentService } from '../comment/comment.service';
 import { CreatePostBodyDTO } from './dto/create-post-body.dto';
 import { ValidateIdPipe } from '../common/pipe/validate-id.pipe';
 import { GetPostResponseDTO } from './dto/get-post-response.dto';
+import { GetPostsResponseDTO } from './dto/get-posts-response.dto';
 import { PostLikeService } from '../post-like/post-like.service';
 import { OnlyMemberGuard } from '../common/guards/only-member.guard';
 import { CreateCommentBodyDTO } from '../comment/dto/create-comment-body.dto';
@@ -190,10 +191,12 @@ export class PostController {
     return new GetCommentResponseDTO(Comment);
   }
 
+  @Get('')
   async getPostsByPage(
-    @Query('page') page: number,
-    @Query('sort') sort: string,
-  ) {
-    return await this.postService.findPostsByPage(page, sort);
+    @Query('page') page: number = 1,
+  ): Promise<GetPostsResponseDTO[]> {
+    const Posts = await this.postService.findPostsByPage(page);
+
+    return Posts.map(post => new GetPostsResponseDTO(post));
   }
 }
