@@ -197,6 +197,10 @@ export class PostController {
   ): Promise<GetPostsResponseDTO[]> {
     const Posts = await this.postService.findPostsByPage(page);
 
+    if (Posts) {
+      throw new NotFoundException(`${page}번 페이지가 존재하지 않습니다.`);
+    }
+
     return Posts.map(post => new GetPostsResponseDTO(post));
   }
 }
