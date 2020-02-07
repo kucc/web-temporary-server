@@ -3,6 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { PostEntity } from './post.entity';
+import { POSTS_PER_PAGE } from '../constants';
+import { EditPostBodyDTO } from './dto/edit-post-body.dto';
 import { CreatePostBodyDTO } from './dto/create-post-body.dto';
 
 @Injectable()
@@ -31,6 +33,16 @@ export class PostService {
     return Post;
   }
 
+  public async editPost(
+    Post: PostEntity,
+    editPostBodyDTO: EditPostBodyDTO,
+  ): Promise<PostEntity> {
+    const newPost = this.postRepository.merge(Post, editPostBodyDTO);
+    await this.postRepository.save(newPost);
+
+    return newPost;
+  }
+
   public async deletePost(Id: number) {
     await this.postRepository.update(Id, { status: false });
 
@@ -48,20 +60,24 @@ export class PostService {
     return { return: true };
   }
 
-  public async findPostsByPage(
-    page: number,
-    sort: string = 'desc',
-  ): Promise<PostEntity[]> {
-    // TODO:
-    //  ORM methods
-    //  createdAt 기준 정렬,
-    //  if N <= viewCount:
-    //    [1, N] 리턴
-    //  else:
-    //    [p * (viewCount -1) + 1, p * viewCount) 리턴
+  public async incrementViews(Id: number) {
+    await this.postRepository.increment({ Id }, 'views', 1);
 
-    console.log(`page: ${page}, sort: ${sort}`);
-    return await this.postRepository.find({ relations: ['postTypeId'] });
+    return { return: true };
+  }
+
+  public async findPostsByPage(page: number): Promise<PostEntity[]> {
+    const skip = (page - 1) * POSTS_PER_PAGE;
+    const take = POSTS_PER_PAGE;
+
+    const Posts = await this.postRepository.find({
+      where: { status: true },
+      order: { createdAt: 'DESC' },
+      skip,
+      take,
+    });
+
+    return Posts;
   }
 
   public async findPostsByUserId(userId: number) {

@@ -39,6 +39,13 @@ export class PostEntity extends Base {
   })
   public postTypeId: number;
 
+  @Column({
+    name: 'views',
+    type: 'int',
+    default: 0,
+  })
+  public views: number;
+
   @ManyToOne(
     type => PostTypeEntity,
     postType => postType.posts,
