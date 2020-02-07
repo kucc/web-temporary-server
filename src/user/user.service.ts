@@ -52,4 +52,15 @@ export class UserService {
       },
     });
   }
+
+  public async updateUser(
+    user: UserEntity,
+    userRequestDTO: UserRequestDTO,
+  ): Promise<UserEntity> {
+    const updatedUser = this.userRepository.merge(user, userRequestDTO);
+
+    await this.userRepository.save(updatedUser);
+
+    return updatedUser;
+  }
 }
