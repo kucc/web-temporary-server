@@ -6,12 +6,18 @@ import {
   Body,
   NotFoundException,
   Put,
+  UseGuards,
+  Req,
+  BadRequestException,
 } from '@nestjs/common';
+import { Request } from 'express';
 
 import { UserService } from './user.service';
-import { ValidateIdPipe } from 'src/common/pipe/validate-id.pipe';
-import { UserResponseDTO } from './dto/user-response.dto';
 import { UserRequestDTO } from './dto/user-request.dto';
+import { UserResponseDTO } from './dto/user-response.dto';
+import { ValidateIdPipe } from 'src/common/pipe/validate-id.pipe';
+import { UserUpdateRequestDTO } from './dto/user-update-request.dto';
+import { OnlyMemberGuard } from '../common/guards/only-member.guard';
 import { VerifyEmailRequestDTO } from './dto/verify-email-request.dto';
 
 @Controller('user')
@@ -55,9 +61,11 @@ export class UserController {
   }
 
   @Put('/:Id')
+  @UseGuards(OnlyMemberGuard)
   async updateUser(
     @Param('Id', ValidateIdPipe) Id: number,
-    @Body() userRequestDTO: UserRequestDTO,
+    @Body() userUpdateRequestDTO: UserUpdateRequestDTO,
+    @Req() request: Request,
   ): Promise<UserResponseDTO> {
     const user = await this.userService.findUserById(Id);
 
@@ -67,7 +75,16 @@ export class UserController {
       );
     }
 
-    const updatedUser = await this.userService.updateUser(user, userRequestDTO);
+    if (request.user.Id !== user.Id) {
+      throw new BadRequestException(
+        `올바르지 않은 요청입니다. 혹시 당신은 해커? 건들지마라 우리 사이트..`,
+      );
+    }
+
+    const updatedUser = await this.userService.updateUser(
+      user,
+      userUpdateRequestDTO,
+    );
 
     return new UserResponseDTO(updatedUser);
   }
