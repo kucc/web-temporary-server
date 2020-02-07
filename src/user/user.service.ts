@@ -3,8 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Injectable, ConflictException } from '@nestjs/common';
 
 import { UserEntity } from './user.entity';
-import { UserRequestDTO } from './dto/user-request.dto';
 import { Bcrypt } from '../common/lib/bcrypt';
+import { UserRequestDTO } from './dto/user-request.dto';
+import { UserUpdateRequestDTO } from './dto/user-update-request.dto';
 
 @Injectable()
 export class UserService {
@@ -55,9 +56,9 @@ export class UserService {
 
   public async updateUser(
     user: UserEntity,
-    userRequestDTO: UserRequestDTO,
+    userUpdateRequestDTO: UserUpdateRequestDTO,
   ): Promise<UserEntity> {
-    const updatedUser = this.userRepository.merge(user, userRequestDTO);
+    const updatedUser = this.userRepository.merge(user, userUpdateRequestDTO);
 
     await this.userRepository.save(updatedUser);
 
