@@ -1,4 +1,11 @@
-import { Entity, ManyToOne, JoinColumn, Column, OneToMany } from 'typeorm';
+import {
+  Entity,
+  ManyToOne,
+  JoinColumn,
+  Column,
+  OneToMany,
+  Unique,
+} from 'typeorm';
 import { UserEntity } from '../user/user.entity';
 import { ProjectEntity } from '../project/project.entity';
 import { Base } from '../common/entity/base.entity';
@@ -7,6 +14,7 @@ import { UserProjectAttendanceEntity } from '../common/entity/user-project-atten
 @Entity({
   name: 'UserProjects',
 })
+@Unique(['userId', 'projectId'])
 export class UserProjectEntity extends Base {
   @Column({
     name: 'userId',

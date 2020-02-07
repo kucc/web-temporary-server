@@ -5,9 +5,9 @@ import { EventEntity } from '../event/event.entity';
 import { Base } from '../common/entity/base.entity';
 import { CommentEntity } from '../comment/comment.entity';
 import { ProjectEntity } from '../project/project.entity';
-import { PostLikeEntity } from '../common/entity/post-like.entity';
+import { PostLikeEntity } from '../post-like/post-like.entity';
 import { UserProjectEntity } from '../user-project/user-project.entity';
-import { CommentLikeEntity } from '../common/entity/comment-like.entity';
+import { CommentLikeEntity } from '../comment-like/comment-like.entity';
 
 @Entity({
   name: 'Users',

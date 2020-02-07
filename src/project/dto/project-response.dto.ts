@@ -9,7 +9,7 @@ export class ProjectResponseDTO {
     this.userId = project.userId;
   }
   public readonly Id: number;
-  public readonly createdAt: Date;
+  public readonly createdAt: string;
   public readonly title: string;
   public readonly place: string;
   public readonly maxAttendance: number;

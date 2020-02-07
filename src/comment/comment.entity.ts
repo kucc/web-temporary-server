@@ -1,8 +1,10 @@
 import { Entity, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
-import { Base } from '../common/entity/base.entity';
-import { CommentLikeEntity } from '../common/entity/comment-like.entity';
-import { CommentReplyEntity } from '../common/entity/comment-reply.entity';
+
 import { UserEntity } from '../user/user.entity';
+import { PostEntity } from '../post/post.entity';
+import { Base } from '../common/entity/base.entity';
+import { CommentLikeEntity } from '../comment-like/comment-like.entity';
+import { CommentReplyEntity } from '../common/entity/comment-reply.entity';
 
 @Entity({
   name: 'Comments',
@@ -38,6 +40,23 @@ export class CommentEntity extends Base {
     referencedColumnName: 'Id',
   })
   public user: UserEntity;
+
+  @Column({
+    name: 'postId',
+    type: 'int',
+    nullable: false,
+  })
+  public postId: number;
+
+  @ManyToOne(
+    type => PostEntity,
+    post => post.comments,
+  )
+  @JoinColumn({
+    name: 'postId',
+    referencedColumnName: 'Id',
+  })
+  public post: PostEntity;
 
   @OneToMany(
     type => CommentReplyEntity,

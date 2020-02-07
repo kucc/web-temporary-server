@@ -1,6 +1,6 @@
-import { IsNotEmpty, Max, IsNumber, IsEmpty, MaxLength } from 'class-validator';
+import { IsNotEmpty, Max, IsNumber, MaxLength } from 'class-validator';
 
-export class ProjectRequestDTO {
+export class UpdateProjectRequestDTO {
   @IsNotEmpty()
   @MaxLength(100)
   public readonly title: string;
@@ -12,7 +12,4 @@ export class ProjectRequestDTO {
   @IsNumber()
   @Max(50)
   public readonly maxAttendance: number;
-
-  @IsEmpty()
-  public userId: number;
 }

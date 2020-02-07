@@ -7,64 +7,116 @@ import {
   Put,
   Delete,
   NotFoundException,
-  HttpCode,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
-import { ValidateIdPipe } from 'src/common/pipe/validate-id.pipe';
+import { Request } from 'express';
+
 import { ProjectService } from './project.service';
-import { ProjectResponseDTO } from './dto/project-response.dto';
 import { ProjectRequestDTO } from './dto/project-request.dto';
+import { ProjectResponseDTO } from './dto/project-response.dto';
+import { ValidateIdPipe } from 'src/common/pipe/validate-id.pipe';
+import { OnlyMemberGuard } from '../common/guards/only-member.guard';
+import { UpdateProjectRequestDTO } from './dto/project-update-request.dto';
 
 @Controller('project')
 export class ProjectController {
   public constructor(private readonly projectService: ProjectService) {}
 
   @Get(':Id')
+  @UseGuards(OnlyMemberGuard)
   async getProjectById(
     @Param('Id', ValidateIdPipe) Id: number,
   ): Promise<ProjectResponseDTO> {
-    const Project = await this.projectService.findProjectById(Id);
-    if (!Project) {
+    const project = await this.projectService.findProjectById(Id);
+    if (!project) {
       throw new NotFoundException(
         `${Id}에 해당하는 프로젝트가 존재하지 않습니다.`,
       );
     }
-    return new ProjectResponseDTO(Project);
+    return new ProjectResponseDTO(project);
   }
 
   @Post('')
+  @UseGuards(OnlyMemberGuard)
   async postProject(
     @Body() projectRequestDTO: ProjectRequestDTO,
+    @Req() req: Request,
   ): Promise<ProjectResponseDTO> {
-    const Project = await this.projectService.createNewProject(
+    const userId = req.user.Id;
+
+    const project = await this.projectService.createNewProject(
       projectRequestDTO,
+      userId,
     );
-    return new ProjectResponseDTO(Project);
+
+    return new ProjectResponseDTO(project);
   }
 
   @Put(':Id')
+  @UseGuards(OnlyMemberGuard)
   async putProjectInfo(
     @Param('Id', ValidateIdPipe) Id: number,
-    @Body() projectRequestDTO: ProjectRequestDTO,
+    @Body() updateProjectRequestDTO: UpdateProjectRequestDTO,
+    @Req() req: Request,
   ): Promise<ProjectResponseDTO> {
-    const Project = await this.projectService.changeProjectInfo(
-      Id,
-      projectRequestDTO,
-    );
-    return new ProjectResponseDTO(Project);
-  }
+    const userId = req.user.Id;
 
-  @Delete(':Id')
-  @HttpCode(204)
-  async deleteProjectById(@Param('Id', ValidateIdPipe) Id: number) {
-    const Project = await this.projectService.findProjectById(Id);
-    if (!Project) {
+    const project = await this.projectService.findProjectById(Id);
+
+    if (!project) {
       throw new NotFoundException(
         `Id가 ${Id}에 해당하는 프로젝트가 존재하지 않습니다.`,
       );
     }
 
-    this.projectService.deleteProjectById(Id);
+    if (project.userId !== userId) {
+      throw new NotFoundException('유효하지 않은 접근입니다.');
+    }
 
-    return '삭제되었습니다.';
+    const updatedProject = await this.projectService.updateProject(
+      Id,
+      updateProjectRequestDTO,
+    );
+
+    return new ProjectResponseDTO(updatedProject);
   }
+
+  @Delete(':Id')
+  @UseGuards(OnlyMemberGuard)
+  async deleteProjectById(
+    @Param('Id', ValidateIdPipe) Id: number,
+    @Req() req: Request,
+  ) {
+    const userId = req.user.Id;
+
+    const project = await this.projectService.findProjectById(Id);
+    if (!project) {
+      throw new NotFoundException(
+        `Id가 ${Id}에 해당하는 프로젝트가 존재하지 않습니다.`,
+      );
+    }
+
+    if (project.userId !== userId) {
+      throw new NotFoundException('유효하지 않은 접근입니다.');
+    }
+
+    try {
+      this.projectService.deleteProjectById(Id);
+    } catch (e) {
+      return { result: false };
+    }
+
+    return { result: true };
+  }
+
+  // @Get(':projectId/user/:userId')
+  // @UseGuards(OnlyMemberGuard)
+  // async getUserProject(
+  //   @Param('projectId', ValidateIdPipe) projectId: number,
+  //   @Param('userId', ValidateIdPipe) userId: number,
+  // ): Promise<UserProjectEntity>{
+
+  //   const
+  // }
 }
