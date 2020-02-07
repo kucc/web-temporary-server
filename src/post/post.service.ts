@@ -63,4 +63,14 @@ export class PostService {
     console.log(`page: ${page}, sort: ${sort}`);
     return await this.postRepository.find({ relations: ['postTypeId'] });
   }
+
+  public async findPostsByUserId(userId: number) {
+    const posts = await this.postRepository.find({
+      where: {
+        userId,
+      },
+    });
+
+    return posts;
+  }
 }
