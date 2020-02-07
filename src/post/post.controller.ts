@@ -20,9 +20,9 @@ import { CommentService } from '../comment/comment.service';
 import { CreatePostBodyDTO } from './dto/create-post-body.dto';
 import { ValidateIdPipe } from '../common/pipe/validate-id.pipe';
 import { GetPostResponseDTO } from './dto/get-post-response.dto';
-import { GetPostsResponseDTO } from './dto/get-posts-response.dto';
 import { PostLikeService } from '../post-like/post-like.service';
 import { OnlyMemberGuard } from '../common/guards/only-member.guard';
+import { GetPostListResponseDTO } from './dto/get-post-list-response.dto';
 import { CreateCommentBodyDTO } from '../comment/dto/create-comment-body.dto';
 import { GetCommentResponseDTO } from '../comment/dto/get-comment-response.dto';
 
@@ -194,13 +194,13 @@ export class PostController {
   @Get('')
   async getPostsByPage(
     @Query('page') page: number = 1,
-  ): Promise<GetPostsResponseDTO[]> {
+  ): Promise<GetPostListResponseDTO> {
     const Posts = await this.postService.findPostsByPage(page);
 
     if (Posts) {
       throw new NotFoundException(`${page}번 페이지가 존재하지 않습니다.`);
     }
 
-    return Posts.map(post => new GetPostsResponseDTO(post));
+    return new GetPostListResponseDTO(Posts);
   }
 }
