@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, MaxLength } from 'class-validator';
+import { IsNotEmpty, MaxLength, IsInt } from 'class-validator';
 
 export class EditPostBodyDTO {
   @IsNotEmpty()
@@ -8,7 +8,7 @@ export class EditPostBodyDTO {
   @IsNotEmpty()
   public readonly content: string;
 
-  @IsNumber()
+  @IsInt()
   @IsNotEmpty()
   public readonly postTypeId: number;
 }
