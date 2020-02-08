@@ -5,9 +5,14 @@ import { CommentEntity } from './comment.entity';
 import { CommentService } from './comment.service';
 import { CommentController } from './comment.controller';
 import { CommentLikeModule } from '../comment-like/comment-like.module';
+import { CommentReplyModule } from '../comment-reply/comment-reply.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([CommentEntity]), CommentLikeModule],
+  imports: [
+    TypeOrmModule.forFeature([CommentEntity]),
+    CommentLikeModule,
+    CommentReplyModule,
+  ],
   controllers: [CommentController],
   providers: [CommentService],
   exports: [CommentService],

@@ -27,17 +27,17 @@ export class PostService {
     createPostBodyDTO: CreatePostBodyDTO,
   ): Promise<PostEntity> {
     createPostBodyDTO.userId = userId;
-    const Post = this.postRepository.create(createPostBodyDTO);
-    await this.postRepository.save(Post);
+    const post = this.postRepository.create(createPostBodyDTO);
+    await this.postRepository.save(post);
 
-    return Post;
+    return post;
   }
 
   public async editPost(
-    Post: PostEntity,
+    post: PostEntity,
     editPostBodyDTO: EditPostBodyDTO,
   ): Promise<PostEntity> {
-    const newPost = this.postRepository.merge(Post, editPostBodyDTO);
+    const newPost = this.postRepository.merge(post, editPostBodyDTO);
     await this.postRepository.save(newPost);
 
     return newPost;
@@ -70,13 +70,13 @@ export class PostService {
     const skip = (page - 1) * POSTS_PER_PAGE;
     const take = POSTS_PER_PAGE;
 
-    const Posts = await this.postRepository.find({
+    const posts = await this.postRepository.find({
       where: { status: true },
       order: { createdAt: 'DESC' },
       skip,
       take,
     });
 
-    return Posts;
+    return posts;
   }
 }

@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { CommentEntity } from './comment.entity';
+import { EditCommentBodyDTO } from './dto/edit-comment-body.dto';
 import { CreateCommentBodyDTO } from './dto/create-comment-body.dto';
 
 @Injectable()
@@ -24,14 +25,30 @@ export class CommentService {
     postId: number,
     userId: number,
     createCommentBodyDTO: CreateCommentBodyDTO,
+    isReply: boolean,
   ): Promise<CommentEntity> {
     createCommentBodyDTO.postId = postId;
     createCommentBodyDTO.userId = userId;
+    createCommentBodyDTO.isReply = isReply;
+
     const Comment = this.commentRepository.create(createCommentBodyDTO);
 
     await this.commentRepository.save(Comment);
 
     return Comment;
+  }
+
+  public async editComment(
+    Comment: CommentEntity,
+    editCommentBodyDTO: EditCommentBodyDTO,
+  ): Promise<CommentEntity> {
+    const newComment = this.commentRepository.merge(
+      Comment,
+      editCommentBodyDTO,
+    );
+
+    await this.commentRepository.save(newComment);
+    return newComment;
   }
 
   public async deleteComment(Id: number) {
