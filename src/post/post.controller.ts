@@ -11,6 +11,7 @@ import {
   Delete,
   NotAcceptableException,
   Put,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Request } from 'express';
 
@@ -22,9 +23,9 @@ import { ValidateIdPipe } from '../common/pipe/validate-id.pipe';
 import { GetPostResponseDTO } from './dto/get-post-response.dto';
 import { PostLikeService } from '../post-like/post-like.service';
 import { OnlyMemberGuard } from '../common/guards/only-member.guard';
+import { GetPostListResponseDTO } from './dto/get-post-list-response.dto';
 import { CreateCommentBodyDTO } from '../comment/dto/create-comment-body.dto';
 import { GetCommentResponseDTO } from '../comment/dto/get-comment-response.dto';
-import { GetPostListResponseDTO } from './dto/get-post-list-response.dto';
 
 @Controller('post')
 export class PostController {
@@ -42,6 +43,10 @@ export class PostController {
 
     if (!Post) {
       throw new NotFoundException(`${Id}번 Post가 존재하지 않습니다.`);
+    }
+
+    if (!Post.status) {
+      throw new NotAcceptableException('삭제된 Post입니다.');
     }
 
     await this.postService.incrementViews(Id);
@@ -75,11 +80,11 @@ export class PostController {
     }
 
     if (!Post.status) {
-      throw new NotFoundException('삭제된 Post입니다.');
+      throw new NotAcceptableException('삭제된 Post입니다.');
     }
 
     if (Post.userId !== request.user.Id) {
-      throw new NotAcceptableException('유효하지 않은 접근입니다.');
+      throw new UnauthorizedException('유효하지 않은 접근입니다.');
     }
 
     const newPost = await this.postService.editPost(Post, editPostBodyDTO);
@@ -98,8 +103,12 @@ export class PostController {
       throw new NotFoundException(`${Id}번 Post가 존재하지 않습니다.`);
     }
 
+    if (!Post.status) {
+      throw new NotAcceptableException('삭제된 Post입니다.');
+    }
+
     if (Post.userId !== request.user.Id) {
-      throw new NotAcceptableException('당신이 쓴 게시글이 아니다!!!!!');
+      throw new UnauthorizedException('유효하지 않은 접근입니다.');
     }
 
     try {
@@ -181,7 +190,7 @@ export class PostController {
     }
 
     if (!Post.status) {
-      throw new NotFoundException('삭제된 Post입니다.');
+      throw new NotAcceptableException('삭제된 Post입니다.');
     }
 
     const userId = request.user.Id;

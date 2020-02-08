@@ -45,11 +45,11 @@ export class CommentController {
     }
 
     if (!Comment.status) {
-      throw new NotFoundException('삭제된 Comment입니다.');
+      throw new NotAcceptableException('삭제된 Comment입니다.');
     }
 
     if (Comment.userId !== request.user.Id) {
-      throw new NotAcceptableException('유효하지 않은 접근입니다.');
+      throw new UnauthorizedException('유효하지 않은 접근입니다.');
     }
 
     const newComment = await this.commentService.editComment(
@@ -70,6 +70,10 @@ export class CommentController {
 
     if (!Comment) {
       throw new NotFoundException(`${Id}번 Comment가 존재하지 않습니다.`);
+    }
+
+    if (!Comment.status) {
+      throw new NotAcceptableException('삭제된 Comment입니다.');
     }
 
     if (Comment.userId !== request.user.Id) {
@@ -98,7 +102,7 @@ export class CommentController {
     }
 
     if (!Comment.status) {
-      throw new NotFoundException('삭제된 Comment입니다.');
+      throw new NotAcceptableException('삭제된 Comment입니다.');
     }
 
     const isLiked = await this.commentLikeService.checkUserLikedComment(
@@ -154,7 +158,7 @@ export class CommentController {
     }
 
     if (!Comment.status) {
-      throw new NotFoundException('삭제된 Comment입니다.');
+      throw new NotAcceptableException('삭제된 Comment입니다.');
     }
 
     const userId = request.user.Id;
