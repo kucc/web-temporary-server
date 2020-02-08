@@ -101,12 +101,12 @@ export class CommentController {
       throw new NotFoundException('삭제된 Comment입니다.');
     }
 
-    const IsLiked = await this.commentLikeService.findEntity(
+    const isLiked = await this.commentLikeService.checkUserLikedComment(
       Comment.Id,
       request.user.Id,
     );
 
-    return IsLiked;
+    return isLiked;
   }
   @Post(':Id/like')
   @UseGuards(OnlyMemberGuard)

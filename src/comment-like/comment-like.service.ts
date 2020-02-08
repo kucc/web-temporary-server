@@ -11,7 +11,10 @@ export class CommentLikeService {
     private readonly commentLikeRepository: Repository<CommentLikeEntity>,
   ) {}
 
-  public async findEntity(commentId: number, userId: number): Promise<boolean> {
+  public async checkUserLikedComment(
+    commentId: number,
+    userId: number,
+  ): Promise<boolean> {
     const CommentLike = await this.commentLikeRepository.findOne({
       where: {
         commentId,
