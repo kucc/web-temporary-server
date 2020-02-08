@@ -24,6 +24,7 @@ import { PostLikeService } from '../post-like/post-like.service';
 import { OnlyMemberGuard } from '../common/guards/only-member.guard';
 import { CreateCommentBodyDTO } from '../comment/dto/create-comment-body.dto';
 import { GetCommentResponseDTO } from '../comment/dto/get-comment-response.dto';
+import { GetPostListResponseDTO } from './dto/get-post-list-response.dto';
 
 @Controller('post')
 export class PostController {
