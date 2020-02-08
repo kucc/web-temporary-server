@@ -38,22 +38,22 @@ export class CommentController {
     @Body() editCommentBodyDTO: EditCommentBodyDTO,
     @Req() request: Request,
   ): Promise<GetCommentResponseDTO> {
-    const Comment = await this.commentService.findCommentById(Id);
+    const comment = await this.commentService.findCommentById(Id);
 
-    if (!Comment) {
+    if (!comment) {
       throw new NotFoundException(`${Id}번 Comment가 존재하지 않습니다.`);
     }
 
-    if (!Comment.status) {
+    if (!comment.status) {
       throw new NotAcceptableException('삭제된 Comment입니다.');
     }
 
-    if (Comment.userId !== request.user.Id) {
+    if (comment.userId !== request.user.Id) {
       throw new UnauthorizedException('유효하지 않은 접근입니다.');
     }
 
     const newComment = await this.commentService.editComment(
-      Comment,
+      comment,
       editCommentBodyDTO,
     );
 
@@ -66,17 +66,17 @@ export class CommentController {
     @Param('Id', ValidateIdPipe) Id: number,
     @Req() request: Request,
   ) {
-    const Comment = await this.commentService.findCommentById(Id);
+    const comment = await this.commentService.findCommentById(Id);
 
-    if (!Comment) {
+    if (!comment) {
       throw new NotFoundException(`${Id}번 Comment가 존재하지 않습니다.`);
     }
 
-    if (!Comment.status) {
+    if (!comment.status) {
       throw new NotAcceptableException('삭제된 Comment입니다.');
     }
 
-    if (Comment.userId !== request.user.Id) {
+    if (comment.userId !== request.user.Id) {
       throw new UnauthorizedException('유효하지 않은 접근입니다.');
     }
 
@@ -95,18 +95,18 @@ export class CommentController {
     @Param('Id', ValidateIdPipe) Id: number,
     @Req() request: Request,
   ): Promise<boolean> {
-    const Comment = await this.commentService.findCommentById(Id);
+    const comment = await this.commentService.findCommentById(Id);
 
-    if (!Comment) {
+    if (!comment) {
       throw new NotFoundException(`${Id}번 Comment가 존재하지 않습니다.`);
     }
 
-    if (!Comment.status) {
+    if (!comment.status) {
       throw new NotAcceptableException('삭제된 Comment입니다.');
     }
 
     const isLiked = await this.commentLikeService.checkUserLikedComment(
-      Comment.Id,
+      comment.Id,
       request.user.Id,
     );
 
@@ -118,13 +118,13 @@ export class CommentController {
     @Param('Id', ValidateIdPipe) Id: number,
     @Req() request: Request,
   ) {
-    const Comment = await this.commentService.findCommentById(Id);
+    const comment = await this.commentService.findCommentById(Id);
 
-    if (!Comment) {
+    if (!comment) {
       throw new NotFoundException(`${Id}번 Comment가 존재하지 않습니다.`);
     }
 
-    if (!Comment.status) {
+    if (!comment.status) {
       throw new NotAcceptableException('삭제된 Comment입니다.');
     }
 
@@ -151,29 +151,29 @@ export class CommentController {
     @Body() createCommentBodyDTO: CreateCommentBodyDTO,
     @Req() request: Request,
   ): Promise<GetCommentResponseDTO> {
-    const Comment = await this.commentService.findCommentById(Id);
+    const comment = await this.commentService.findCommentById(Id);
 
-    if (!Comment) {
+    if (!comment) {
       throw new NotFoundException(`${Id}번 Comment가 존재하지 않습니다.`);
     }
 
-    if (!Comment.status) {
+    if (!comment.status) {
       throw new NotAcceptableException('삭제된 Comment입니다.');
     }
 
     const userId = request.user.Id;
-    const postId = Comment.postId;
+    const postId = comment.postId;
     const isReply = true;
 
-    const Reply = await this.commentService.createComment(
+    const reply = await this.commentService.createComment(
       postId,
       userId,
       createCommentBodyDTO,
       isReply,
     );
 
-    this.commentReplyService.addParentChildRelation(Id, Reply.Id);
+    this.commentReplyService.addParentChildRelation(Id, reply.Id);
 
-    return new GetCommentResponseDTO(Reply);
+    return new GetCommentResponseDTO(reply);
   }
 }
