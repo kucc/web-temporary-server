@@ -9,25 +9,32 @@ import {
   UseGuards,
   Req,
   BadRequestException,
+  Query,
 } from '@nestjs/common';
 import { Request } from 'express';
 
 import { UserService } from './user.service';
+import { PostService } from '../post/post.service';
 import { UserRequestDTO } from './dto/user-request.dto';
 import { UserResponseDTO } from './dto/user-response.dto';
 import { ValidateIdPipe } from 'src/common/pipe/validate-id.pipe';
 import { UserUpdateRequestDTO } from './dto/user-update-request.dto';
 import { OnlyMemberGuard } from '../common/guards/only-member.guard';
 import { VerifyEmailRequestDTO } from './dto/verify-email-request.dto';
+import { GetPostListResponseDTO } from '../post/dto/get-post-list-response.dto';
 
 @Controller('user')
 export class UserController {
-  public constructor(private readonly userService: UserService) {}
+  public constructor(
+    private readonly userService: UserService,
+    private readonly postService: PostService,
+  ) {}
 
   @Post('/signup')
   async signUp(
     @Body() userRequestDTO: UserRequestDTO,
   ): Promise<UserResponseDTO> {
+    // TODO : 이메일 요청 전송
     const User = await this.userService.createUser(userRequestDTO);
     return new UserResponseDTO(User);
   }
@@ -43,6 +50,28 @@ export class UserController {
     }
 
     return { result: false };
+  }
+
+  @Get('/:Id/post')
+  async getPostByUserId(
+    @Param('Id', ValidateIdPipe) Id: number,
+    @Query('page', ValidateIdPipe) page: number = 1,
+  ) {
+    const user = await this.userService.findUserById(Id);
+
+    if (!user) {
+      throw new NotFoundException(
+        `${Id}번 Id를 갖는 회원이 존재하지 않습니다.`,
+      );
+    }
+
+    const posts = await this.postService.findPostsByUserId(Id, page);
+
+    if (!posts.length) {
+      throw new NotFoundException(`${page} 페이지가 존재하지 않습니다.`);
+    }
+
+    return new GetPostListResponseDTO(posts);
   }
 
   @Get('/:Id')
