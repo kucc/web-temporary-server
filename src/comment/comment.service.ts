@@ -57,6 +57,14 @@ export class CommentService {
     return { return: true };
   }
 
+  public async findCommentsByPostId(Id: number): Promise<CommentEntity[]> {
+    const comments = await this.commentRepository.find({
+      where: { postId: Id, isReply: false },
+    });
+
+    return comments;
+  }
+
   public async incrementLikes(Id: number) {
     await this.commentRepository.increment({ Id }, 'likes', 1);
 
