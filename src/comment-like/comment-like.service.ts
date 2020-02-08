@@ -15,14 +15,14 @@ export class CommentLikeService {
     commentId: number,
     userId: number,
   ): Promise<boolean> {
-    const CommentLike = await this.commentLikeRepository.findOne({
+    const commentLike = await this.commentLikeRepository.findOne({
       where: {
         commentId,
         userId,
       },
     });
 
-    if (!CommentLike) {
+    if (!commentLike) {
       return false;
     }
     return true;
@@ -32,14 +32,14 @@ export class CommentLikeService {
     commentId: number,
     userId: number,
   ): Promise<boolean> {
-    const CommentLike = await this.commentLikeRepository.findOne({
+    const commentLike = await this.commentLikeRepository.findOne({
       where: {
         commentId,
         userId,
       },
     });
 
-    if (!CommentLike) {
+    if (!commentLike) {
       await this.commentLikeRepository.insert({ commentId, userId });
       return true;
     }
