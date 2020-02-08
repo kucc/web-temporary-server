@@ -159,11 +159,13 @@ export class CommentController {
 
     const userId = request.user.Id;
     const postId = Comment.postId;
+    const isReply = true;
 
     const Reply = await this.commentService.createComment(
       postId,
       userId,
       createCommentBodyDTO,
+      isReply,
     );
 
     this.commentReplyService.addParentChildRelation(Id, Reply.Id);

@@ -25,9 +25,12 @@ export class CommentService {
     postId: number,
     userId: number,
     createCommentBodyDTO: CreateCommentBodyDTO,
+    isReply: boolean,
   ): Promise<CommentEntity> {
     createCommentBodyDTO.postId = postId;
     createCommentBodyDTO.userId = userId;
+    createCommentBodyDTO.isReply = isReply;
+
     const Comment = this.commentRepository.create(createCommentBodyDTO);
 
     await this.commentRepository.save(Comment);

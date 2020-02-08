@@ -185,11 +185,13 @@ export class PostController {
     }
 
     const userId = request.user.Id;
+    const isReply = false;
 
     const Comment = await this.commentService.createComment(
       Id,
       userId,
       createCommentBodyDTO,
+      isReply,
     );
 
     return new GetCommentResponseDTO(Comment);
