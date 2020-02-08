@@ -31,6 +31,13 @@ export class CommentEntity extends Base {
   })
   public userId: number;
 
+  @Column({
+    name: 'isReply',
+    type: 'boolean',
+    nullable: false,
+  })
+  public isReply: boolean;
+
   @ManyToOne(
     type => UserEntity,
     user => user.comments,
