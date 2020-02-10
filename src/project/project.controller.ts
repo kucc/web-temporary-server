@@ -77,7 +77,7 @@ export class ProjectController {
     }
 
     const updatedProject = await this.projectService.updateProject(
-      Id,
+      project,
       updateProjectRequestDTO,
     );
 
@@ -104,7 +104,7 @@ export class ProjectController {
     }
 
     try {
-      this.projectService.deleteProjectById(Id);
+      this.projectService.deleteProject(project);
     } catch (e) {
       return { result: false };
     }
