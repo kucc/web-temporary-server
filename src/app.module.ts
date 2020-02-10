@@ -7,9 +7,18 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { ProjectModule } from './project/project.module';
 import { DeserializeUserMiddleWare } from './common/middleware/deserialize-user.middleware';
+import { PostModule } from './post/post.module';
+import { PostLikeModule } from './post-like/post-like.module';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(), UserModule, AuthModule, ProjectModule],
+  imports: [
+    TypeOrmModule.forRoot(),
+    UserModule,
+    AuthModule,
+    ProjectModule,
+    UserProjectModule,
+    PostModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
