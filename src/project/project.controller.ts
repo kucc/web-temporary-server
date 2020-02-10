@@ -29,11 +29,13 @@ export class ProjectController {
     @Param('Id', ValidateIdPipe) Id: number,
   ): Promise<ProjectResponseDTO> {
     const project = await this.projectService.findProjectById(Id);
+
     if (!project) {
       throw new NotFoundException(
         `${Id}에 해당하는 프로젝트가 존재하지 않습니다.`,
       );
     }
+
     return new ProjectResponseDTO(project);
   }
 
@@ -55,7 +57,7 @@ export class ProjectController {
 
   @Put(':Id')
   @UseGuards(OnlyMemberGuard)
-  async putProjectInfo(
+  async updateProjectById(
     @Param('Id', ValidateIdPipe) Id: number,
     @Body() updateProjectRequestDTO: UpdateProjectRequestDTO,
     @Req() req: Request,
@@ -71,7 +73,7 @@ export class ProjectController {
     }
 
     if (project.userId !== userId) {
-      throw new NotFoundException('유효하지 않은 접근입니다.');
+      throw new UnauthorizedException('유효하지 않은 접근입니다.');
     }
 
     const updatedProject = await this.projectService.updateProject(
@@ -98,7 +100,7 @@ export class ProjectController {
     }
 
     if (project.userId !== userId) {
-      throw new NotFoundException('유효하지 않은 접근입니다.');
+      throw new UnauthorizedException('유효하지 않은 접근입니다.');
     }
 
     try {
