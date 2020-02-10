@@ -6,9 +6,10 @@ import {
   OneToMany,
   Unique,
 } from 'typeorm';
+
 import { UserEntity } from '../user/user.entity';
-import { ProjectEntity } from '../project/project.entity';
 import { Base } from '../common/entity/base.entity';
+import { ProjectEntity } from '../project/project.entity';
 import { UserProjectAttendanceEntity } from '../user-project-attendance/user-project-attendance.entity';
 
 @Entity({
