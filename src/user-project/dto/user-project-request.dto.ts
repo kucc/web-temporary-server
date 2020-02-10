@@ -1,4 +1,4 @@
-import { Max, IsNumber, IsEmpty } from 'class-validator';
+import { IsEmpty } from 'class-validator';
 
 export class UserProjectRequestDTO {
   @IsEmpty()

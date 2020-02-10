@@ -5,7 +5,7 @@ export class UserProjectResponseDTO {
     this.Id = userProject.Id;
     this.userId = userProject.userId;
     this.projectId = userProject.projectId;
-    this.absense = userProject.absense;
+    this.absence = userProject.absence;
     this.late = userProject.late;
     this.attendance = userProject.attendance;
   }
@@ -14,5 +14,5 @@ export class UserProjectResponseDTO {
   public readonly projectId: number;
   public readonly attendance: number;
   public readonly late: number;
-  public readonly absense: number;
+  public readonly absence: number;
 }

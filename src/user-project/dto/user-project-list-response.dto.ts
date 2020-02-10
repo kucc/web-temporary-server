@@ -9,7 +9,7 @@ export class UserProjectListResponseDTO {
         userId: userProject.userId,
         attendance: userProject.attendance,
         late: userProject.late,
-        absence: userProject.absense,
+        absence: userProject.absence,
       };
     });
   }
