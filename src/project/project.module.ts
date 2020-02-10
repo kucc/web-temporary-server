@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
-import { ProjectController } from './project.controller';
-import { ProjectService } from './project.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { ProjectEntity } from './project.entity';
-import { UserProjectModule } from '../user-project/user-project.module';
 import { UserModule } from '../user/user.module';
+import { ProjectService } from './project.service';
+import { ProjectController } from './project.controller';
+import { UserProjectModule } from '../user-project/user-project.module';
 
 @Module({
   imports: [
