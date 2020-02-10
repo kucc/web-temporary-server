@@ -42,6 +42,7 @@ export class AuthController {
 
     const accessToken = await this.authService.createAccessToken(user);
     response.cookie('accessToken', accessToken);
+    response.setHeader('Access-Control-Allow-Credentials', 'true');
 
     response.json({
       result: true,
@@ -51,6 +52,7 @@ export class AuthController {
   @Get('/logout')
   async logout(@Req() request: Request, @Res() response: Response) {
     response.clearCookie('accessToken');
+    response.setHeader('Access-Control-Allow-Credentials', 'true');
 
     response.json({
       result: true,
