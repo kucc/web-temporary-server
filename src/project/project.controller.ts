@@ -248,8 +248,8 @@ export class ProjectController {
     }
 
     const userProject = await this.userProjectService.findUserProjectById(
-      userId,
       projectId,
+      userId,
     );
 
     if (!userProject) {
@@ -292,9 +292,11 @@ export class ProjectController {
       throw new UnauthorizedException(`유효한 접근이 아닙니다.`);
     }
 
+    console.log(userId, projectId);
+
     const userProject = await this.userProjectService.findUserProjectById(
-      userId,
       projectId,
+      userId,
     );
 
     if (!userProject) {
