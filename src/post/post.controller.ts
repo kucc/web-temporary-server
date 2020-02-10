@@ -11,6 +11,7 @@ import {
   Delete,
   NotAcceptableException,
   Put,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Request } from 'express';
 
@@ -25,6 +26,7 @@ import { OnlyMemberGuard } from '../common/guards/only-member.guard';
 import { GetPostListResponseDTO } from './dto/get-post-list-response.dto';
 import { CreateCommentBodyDTO } from '../comment/dto/create-comment-body.dto';
 import { GetCommentResponseDTO } from '../comment/dto/get-comment-response.dto';
+import { GetCommentListResponseDTO } from '../comment/dto/get-comment-list-response.dto';
 
 @Controller('post')
 export class PostController {
@@ -38,10 +40,14 @@ export class PostController {
   async getPostById(
     @Param('Id', ValidateIdPipe) Id: number,
   ): Promise<GetPostResponseDTO> {
-    const Post = await this.postService.findPostById(Id);
+    const post = await this.postService.findPostById(Id);
 
-    if (!Post) {
+    if (!post) {
       throw new NotFoundException(`${Id}번 Post가 존재하지 않습니다.`);
+    }
+
+    if (!post.status) {
+      throw new NotAcceptableException('삭제된 Post입니다.');
     }
 
     await this.postService.incrementViews(Id);
@@ -57,8 +63,8 @@ export class PostController {
     @Req() request: Request,
   ): Promise<GetPostResponseDTO> {
     const userId = request.user.Id;
-    const Post = await this.postService.createPost(userId, createPostBodyDTO);
-    return new GetPostResponseDTO(Post);
+    const post = await this.postService.createPost(userId, createPostBodyDTO);
+    return new GetPostResponseDTO(post);
   }
 
   @Put(':Id')
@@ -68,21 +74,21 @@ export class PostController {
     @Body() editPostBodyDTO: EditPostBodyDTO,
     @Req() request: Request,
   ): Promise<GetPostResponseDTO> {
-    const Post = await this.postService.findPostById(Id);
+    const post = await this.postService.findPostById(Id);
 
-    if (!Post) {
+    if (!post) {
       throw new NotFoundException(`${Id}번 Post가 존재하지 않습니다.`);
     }
 
-    if (!Post.status) {
-      throw new NotFoundException('삭제된 Post입니다.');
+    if (!post.status) {
+      throw new NotAcceptableException('삭제된 Post입니다.');
     }
 
-    if (Post.userId !== request.user.Id) {
-      throw new NotAcceptableException('유효하지 않은 접근입니다.');
+    if (post.userId !== request.user.Id) {
+      throw new UnauthorizedException('유효하지 않은 접근입니다.');
     }
 
-    const newPost = await this.postService.editPost(Post, editPostBodyDTO);
+    const newPost = await this.postService.editPost(post, editPostBodyDTO);
     return new GetPostResponseDTO(newPost);
   }
 
@@ -92,14 +98,18 @@ export class PostController {
     @Param('Id', ValidateIdPipe) Id: number,
     @Req() request: Request,
   ) {
-    const Post = await this.postService.findPostById(Id);
+    const post = await this.postService.findPostById(Id);
 
-    if (!Post) {
+    if (!post) {
       throw new NotFoundException(`${Id}번 Post가 존재하지 않습니다.`);
     }
 
-    if (Post.userId !== request.user.Id) {
-      throw new NotAcceptableException('당신이 쓴 게시글이 아니다!!!!!');
+    if (!post.status) {
+      throw new NotAcceptableException('삭제된 Post입니다.');
+    }
+
+    if (post.userId !== request.user.Id) {
+      throw new UnauthorizedException('유효하지 않은 접근입니다.');
     }
 
     try {
@@ -117,18 +127,18 @@ export class PostController {
     @Param('Id', ValidateIdPipe) Id: number,
     @Req() request: Request,
   ): Promise<boolean> {
-    const Post = await this.postService.findPostById(Id);
+    const post = await this.postService.findPostById(Id);
 
-    if (!Post) {
+    if (!post) {
       throw new NotFoundException(`${Id}번 Post가 존재하지 않습니다.`);
     }
 
-    if (!Post.status) {
+    if (!post.status) {
       throw new NotAcceptableException('삭제된 Post입니다.');
     }
 
     const isLiked = await this.postLikeService.checkUserLikedPost(
-      Post.Id,
+      post.Id,
       request.user.Id,
     );
 
@@ -141,13 +151,13 @@ export class PostController {
     @Param('Id', ValidateIdPipe) Id: number,
     @Req() request: Request,
   ) {
-    const Post = await this.postService.findPostById(Id);
+    const post = await this.postService.findPostById(Id);
 
-    if (!Post) {
+    if (!post) {
       throw new NotFoundException(`${Id}번 Post가 존재하지 않습니다.`);
     }
 
-    if (!Post.status) {
+    if (!post.status) {
       throw new NotAcceptableException('삭제된 Post입니다.');
     }
 
@@ -174,33 +184,59 @@ export class PostController {
     @Body() createCommentBodyDTO: CreateCommentBodyDTO,
     @Req() request: Request,
   ): Promise<GetCommentResponseDTO> {
-    const Post = await this.postService.findPostById(Id);
+    const post = await this.postService.findPostById(Id);
 
-    if (!Post) {
+    if (!post) {
       throw new NotFoundException(`${Id}번 Post가 존재하지 않습니다.`);
     }
 
-    const userId = request.user.Id;
+    if (!post.status) {
+      throw new NotAcceptableException('삭제된 Post입니다.');
+    }
 
-    const Comment = await this.commentService.createComment(
+    const userId = request.user.Id;
+    const isReply = false;
+
+    const comment = await this.commentService.createComment(
       Id,
       userId,
       createCommentBodyDTO,
+      isReply,
     );
 
-    return new GetCommentResponseDTO(Comment);
+    return new GetCommentResponseDTO(comment);
+  }
+
+  @Get(':Id/comment')
+  @UseGuards(OnlyMemberGuard)
+  async loadAllComments(
+    @Param('Id', ValidateIdPipe) Id: number,
+  ): Promise<GetCommentListResponseDTO> {
+    const post = await this.postService.findPostById(Id);
+
+    if (!post) {
+      throw new NotFoundException(`${Id}번 Post가 존재하지 않습니다.`);
+    }
+
+    if (!post.status) {
+      throw new NotAcceptableException('삭제된 Post입니다.');
+    }
+
+    const comments = await this.commentService.findCommentsByPostId(Id);
+
+    return new GetCommentListResponseDTO(comments);
   }
 
   @Get('')
   async getPostsByPage(
     @Query('page', ValidateIdPipe) page: number = 1,
   ): Promise<GetPostListResponseDTO> {
-    const Posts = await this.postService.findPostsByPage(page);
+    const posts = await this.postService.findPostsByPage(page);
 
-    if (!Posts.length) {
+    if (!posts.length) {
       throw new NotFoundException(`${page} 페이지가 존재하지 않습니다.`);
     }
 
-    return new GetPostListResponseDTO(Posts);
+    return new GetPostListResponseDTO(posts);
   }
 }

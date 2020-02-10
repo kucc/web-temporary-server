@@ -9,4 +9,7 @@ export class CreateCommentBodyDTO {
 
   @IsEmpty()
   public userId: number;
+
+  @IsEmpty()
+  public isReply: boolean;
 }

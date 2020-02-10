@@ -4,7 +4,7 @@ import { UserEntity } from '../user/user.entity';
 import { PostEntity } from '../post/post.entity';
 import { Base } from '../common/entity/base.entity';
 import { CommentLikeEntity } from '../comment-like/comment-like.entity';
-import { CommentReplyEntity } from '../common/entity/comment-reply.entity';
+import { CommentReplyEntity } from '../comment-reply/comment-reply.entity';
 
 @Entity({
   name: 'Comments',
@@ -30,6 +30,13 @@ export class CommentEntity extends Base {
     nullable: false,
   })
   public userId: number;
+
+  @Column({
+    name: 'isReply',
+    type: 'boolean',
+    nullable: false,
+  })
+  public isReply: boolean;
 
   @ManyToOne(
     type => UserEntity,

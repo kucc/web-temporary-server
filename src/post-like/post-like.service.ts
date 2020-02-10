@@ -15,28 +15,28 @@ export class PostLikeService {
     postId: number,
     userId: number,
   ): Promise<boolean> {
-    const PostLike = await this.postLikeRepository.findOne({
+    const postLike = await this.postLikeRepository.findOne({
       where: {
         postId,
         userId,
       },
     });
 
-    if (!PostLike) {
+    if (!postLike) {
       return false;
     }
     return true;
   }
 
   public async toggleLikes(postId: number, userId: number): Promise<boolean> {
-    const PostLike = await this.postLikeRepository.findOne({
+    const postLike = await this.postLikeRepository.findOne({
       where: {
         postId,
         userId,
       },
     });
 
-    if (!PostLike) {
+    if (!postLike) {
       await this.postLikeRepository.insert({ postId, userId });
       return true;
     }

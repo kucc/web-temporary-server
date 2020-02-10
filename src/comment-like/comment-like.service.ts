@@ -11,18 +11,35 @@ export class CommentLikeService {
     private readonly commentLikeRepository: Repository<CommentLikeEntity>,
   ) {}
 
-  public async toggleLikes(
+  public async checkUserLikedComment(
     commentId: number,
     userId: number,
   ): Promise<boolean> {
-    const CommentLike = await this.commentLikeRepository.findOne({
+    const commentLike = await this.commentLikeRepository.findOne({
       where: {
         commentId,
         userId,
       },
     });
 
-    if (!CommentLike) {
+    if (!commentLike) {
+      return false;
+    }
+    return true;
+  }
+
+  public async toggleLikes(
+    commentId: number,
+    userId: number,
+  ): Promise<boolean> {
+    const commentLike = await this.commentLikeRepository.findOne({
+      where: {
+        commentId,
+        userId,
+      },
+    });
+
+    if (!commentLike) {
       await this.commentLikeRepository.insert({ commentId, userId });
       return true;
     }

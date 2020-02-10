@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { CommentEntity } from './comment.entity';
+import { EditCommentBodyDTO } from './dto/edit-comment-body.dto';
 import { CreateCommentBodyDTO } from './dto/create-comment-body.dto';
 
 @Injectable()
@@ -24,20 +25,44 @@ export class CommentService {
     postId: number,
     userId: number,
     createCommentBodyDTO: CreateCommentBodyDTO,
+    isReply: boolean,
   ): Promise<CommentEntity> {
     createCommentBodyDTO.postId = postId;
     createCommentBodyDTO.userId = userId;
-    const Comment = this.commentRepository.create(createCommentBodyDTO);
+    createCommentBodyDTO.isReply = isReply;
 
-    await this.commentRepository.save(Comment);
+    const comment = this.commentRepository.create(createCommentBodyDTO);
 
-    return Comment;
+    await this.commentRepository.save(comment);
+
+    return comment;
+  }
+
+  public async editComment(
+    comment: CommentEntity,
+    editCommentBodyDTO: EditCommentBodyDTO,
+  ): Promise<CommentEntity> {
+    const newComment = this.commentRepository.merge(
+      comment,
+      editCommentBodyDTO,
+    );
+
+    await this.commentRepository.save(newComment);
+    return newComment;
   }
 
   public async deleteComment(Id: number) {
     await this.commentRepository.update(Id, { status: false });
 
     return { return: true };
+  }
+
+  public async findCommentsByPostId(Id: number): Promise<CommentEntity[]> {
+    const comments = await this.commentRepository.find({
+      where: { postId: Id, isReply: false },
+    });
+
+    return comments;
   }
 
   public async incrementLikes(Id: number) {
