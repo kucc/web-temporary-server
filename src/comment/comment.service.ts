@@ -31,19 +31,19 @@ export class CommentService {
     createCommentBodyDTO.userId = userId;
     createCommentBodyDTO.isReply = isReply;
 
-    const Comment = this.commentRepository.create(createCommentBodyDTO);
+    const comment = this.commentRepository.create(createCommentBodyDTO);
 
-    await this.commentRepository.save(Comment);
+    await this.commentRepository.save(comment);
 
-    return Comment;
+    return comment;
   }
 
   public async editComment(
-    Comment: CommentEntity,
+    comment: CommentEntity,
     editCommentBodyDTO: EditCommentBodyDTO,
   ): Promise<CommentEntity> {
     const newComment = this.commentRepository.merge(
-      Comment,
+      comment,
       editCommentBodyDTO,
     );
 
@@ -55,6 +55,14 @@ export class CommentService {
     await this.commentRepository.update(Id, { status: false });
 
     return { return: true };
+  }
+
+  public async findCommentsByPostId(Id: number): Promise<CommentEntity[]> {
+    const comments = await this.commentRepository.find({
+      where: { postId: Id, isReply: false },
+    });
+
+    return comments;
   }
 
   public async incrementLikes(Id: number) {

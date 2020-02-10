@@ -26,6 +26,7 @@ import { OnlyMemberGuard } from '../common/guards/only-member.guard';
 import { GetPostListResponseDTO } from './dto/get-post-list-response.dto';
 import { CreateCommentBodyDTO } from '../comment/dto/create-comment-body.dto';
 import { GetCommentResponseDTO } from '../comment/dto/get-comment-response.dto';
+import { GetCommentListResponseDTO } from '../comment/dto/get-comment-list-response.dto';
 
 @Controller('post')
 export class PostController {
@@ -204,6 +205,26 @@ export class PostController {
     );
 
     return new GetCommentResponseDTO(comment);
+  }
+
+  @Get(':Id/comment')
+  @UseGuards(OnlyMemberGuard)
+  async loadAllComments(
+    @Param('Id', ValidateIdPipe) Id: number,
+  ): Promise<GetCommentListResponseDTO> {
+    const post = await this.postService.findPostById(Id);
+
+    if (!post) {
+      throw new NotFoundException(`${Id}번 Post가 존재하지 않습니다.`);
+    }
+
+    if (!post.status) {
+      throw new NotAcceptableException('삭제된 Post입니다.');
+    }
+
+    const comments = await this.commentService.findCommentsByPostId(Id);
+
+    return new GetCommentListResponseDTO(comments);
   }
 
   @Get('')
