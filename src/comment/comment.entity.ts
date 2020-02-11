@@ -34,7 +34,7 @@ export class CommentEntity extends Base {
   @Column({
     name: 'isReply',
     type: 'boolean',
-    nullable: false,
+    nullable: true,
   })
   public isReply: boolean;
 
