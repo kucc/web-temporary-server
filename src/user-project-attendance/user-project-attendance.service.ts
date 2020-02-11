@@ -40,12 +40,14 @@ export class AttendanceService {
   }
 
   public async createAttendance(
-    Id: number,
+    userProjectId: number,
     attendanceRequestDTO: AttendanceRequestDTO,
   ): Promise<AttendanceEntity> {
-    attendanceRequestDTO.userProjectId = Id;
+    attendanceRequestDTO.userProjectId = userProjectId;
     const attendance = this.attendanceRepository.create(attendanceRequestDTO);
-
+    await this.attendanceRepository.save(attendance);
     return attendance;
   }
+
+  public async checkAttendanceType(attendanceTypeId: number) {}
 }

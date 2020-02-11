@@ -8,6 +8,7 @@ export class AttendanceListResponseDTO {
         Id: attendance.Id,
         createdAt: attendance.createdAt,
         description: attendance.description,
+        attendanceType: attendance.attendanceTypeId,
       };
     });
   }

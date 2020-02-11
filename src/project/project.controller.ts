@@ -466,6 +466,10 @@ export class ProjectController {
       attendanceRequestDTO,
     );
 
+    if (!attendance) {
+      throw new NotFoundException(`출석 체크를 실패했습니다.`);
+    }
+
     return new AttendanceResponseDTO(attendance);
   }
 }
