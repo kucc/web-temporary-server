@@ -19,10 +19,8 @@ import { ProjectRequestDTO } from './dto/project-request.dto';
 import { ProjectResponseDTO } from './dto/project-response.dto';
 import { ValidateIdPipe } from 'src/common/pipe/validate-id.pipe';
 import { OnlyMemberGuard } from '../common/guards/only-member.guard';
-import { UserProjectEntity } from '../user-project/user-project.entity';
 import { UserProjectService } from '../user-project/user-project.service';
 import { UpdateProjectRequestDTO } from './dto/project-update-request.dto';
-import { UserProjectRequestDTO } from '../user-project/dto/user-project-request.dto';
 import { UserProjectResponseDTO } from '../user-project/dto/user-project-response.dto';
 import { UserProjectListResponseDTO } from '../user-project/dto/user-project-list-response.dto';
 import { UpdateUserProjectRequestDTO } from '../user-project/dto/user-project-update-request.dto';
@@ -30,8 +28,8 @@ import { UpdateUserProjectRequestDTO } from '../user-project/dto/user-project-up
 @Controller('project')
 export class ProjectController {
   public constructor(
-    private readonly projectService: ProjectService,
     private readonly userService: UserService,
+    private readonly projectService: ProjectService,
     private readonly userProjectService: UserProjectService,
   ) {}
 
