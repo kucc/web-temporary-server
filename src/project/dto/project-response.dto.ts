@@ -3,6 +3,7 @@ import { ProjectEntity } from '../project.entity';
 export class ProjectResponseDTO {
   public constructor(project: ProjectEntity) {
     this.Id = project.Id;
+    this.createdAt = project.createdAt;
     this.title = project.title;
     this.place = project.place;
     this.maxAttendance = project.maxAttendance;
