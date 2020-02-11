@@ -6,7 +6,6 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { ProjectModule } from './project/project.module';
-import { UserProjectModule } from './user-project/user-project.module';
 import { DeserializeUserMiddleWare } from './common/middleware/deserialize-user.middleware';
 import { PostModule } from './post/post.module';
 import { CommentModule } from './comment/comment.module';

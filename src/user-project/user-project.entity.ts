@@ -9,7 +9,7 @@ import {
 import { UserEntity } from '../user/user.entity';
 import { ProjectEntity } from '../project/project.entity';
 import { Base } from '../common/entity/base.entity';
-import { UserProjectAttendanceEntity } from '../common/entity/user-project-attendance.entity';
+import { UserProjectAttendanceEntity } from '../user-project-attendance/user-project-attendance.entity';
 
 @Entity({
   name: 'UserProjects',
@@ -65,11 +65,11 @@ export class UserProjectEntity extends Base {
   public late: number;
 
   @Column({
-    name: 'absense',
+    name: 'absence',
     type: 'int',
     default: 0,
   })
-  public absense: number;
+  public absence: number;
 
   @OneToMany(
     type => UserProjectAttendanceEntity,

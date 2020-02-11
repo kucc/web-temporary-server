@@ -14,14 +14,14 @@ export class ProjectService {
   ) {}
 
   public async findProjectById(Id: number): Promise<ProjectEntity> {
-    const Project = await this.projectRepository.findOne({
+    const project = await this.projectRepository.findOne({
       where: {
         Id,
         status: true,
       },
     });
 
-    return Project;
+    return project;
   }
 
   public async createNewProject(
@@ -29,18 +29,17 @@ export class ProjectService {
     userId: number,
   ): Promise<ProjectEntity> {
     projectRequestDTO.userId = userId;
-    const Project = this.projectRepository.create(projectRequestDTO);
-    await this.projectRepository.save(Project);
-    return Project;
+    const project = this.projectRepository.create(projectRequestDTO);
+    await this.projectRepository.save(project);
+    return project;
   }
 
   public async updateProject(
-    Id: number,
+    project: ProjectEntity,
     updateProjectRequestDTO: UpdateProjectRequestDTO,
   ): Promise<ProjectEntity> {
-    const Project = await this.findProjectById(Id);
     const newProject = this.projectRepository.merge(
-      Project,
+      project,
       updateProjectRequestDTO,
     );
 
@@ -48,8 +47,7 @@ export class ProjectService {
     return newProject;
   }
 
-  public async deleteProjectById(Id: number) {
-    const deletedProject = await this.findProjectById(Id);
+  public async deleteProject(deletedProject: ProjectEntity) {
     deletedProject.status = false;
     await this.projectRepository.save(deletedProject);
   }
