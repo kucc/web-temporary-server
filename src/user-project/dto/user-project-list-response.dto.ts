@@ -10,6 +10,7 @@ export class UserProjectListResponseDTO {
         attendance: userProject.attendance,
         late: userProject.late,
         absence: userProject.absence,
+        noticedAbsence: userProject.noticedAbsence,
       };
     });
   }
