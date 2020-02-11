@@ -194,26 +194,46 @@ export class ProjectController {
         `${projectId}번 프로젝트에 참여하는 유저를 불러오는데 실패했습니다.`,
       );
     }
-    //사람이 없는 세션일 경우 오류를 발생시켜야 할까...?
 
     return new UserProjectListResponseDTO(userList);
   }
 
-  @Post(':projectId/user')
+  @Post(':projectId/user/:userId')
   @UseGuards(OnlyMemberGuard)
-  async postUserProject(
+  async createUserProject(
     @Param('projectId', ValidateIdPipe) projectId: number,
-    @Body() userProjectRequestDTO: UserProjectRequestDTO,
+    @Param('userId', ValidateIdPipe) userId: number,
     @Req() req: Request,
-  ): Promise<UserProjectResponseDTO> {
-    const userId = req.user.Id;
+  ) {
+    const project = await this.projectService.findProjectById(projectId);
+    if (!project) {
+      throw new NotFoundException(
+        `Id가 ${projectId}에 해당하는 프로젝트가 존재하지 않습니다.`,
+      );
+    }
+
+    const user = await this.userService.findUserById(userId);
+    if (!user) {
+      throw new NotFoundException(
+        `Id가 ${userId}에 해당하는 사용자가 존재하지 않습니다.`,
+      );
+    }
+
+    const requestUserId = req.user.Id; //세션장이 세션참여자를 초대
+    if (requestUserId !== project.userId) {
+      throw new UnauthorizedException(`유효한 접근이 아닙니다. `);
+    }
 
     const userProject = await this.userProjectService.createUserProject(
       userId,
       projectId,
-      userProjectRequestDTO,
     );
-    return new UserProjectResponseDTO(userProject);
+
+    if (!userProject) {
+      throw new NotFoundException(`유저 프로젝트가 생성되지 않았습니다.`);
+    }
+
+    return { result: true };
   }
 
   //출석 수 강제 변경 - 권장하지 않습니다.

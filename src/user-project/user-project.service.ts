@@ -50,16 +50,13 @@ export class UserProjectService {
   public async createUserProject(
     userId: number,
     projectId: number,
-    userProjectRequestDTO: UserProjectRequestDTO,
   ): Promise<UserProjectEntity> {
-    userProjectRequestDTO.projectId = projectId;
-    userProjectRequestDTO.userId = userId;
+    const userProject = this.userProjectRepository.create({
+      userId,
+      projectId,
+    });
 
-    const userProject = this.userProjectRepository.create(
-      userProjectRequestDTO,
-    );
     await this.userProjectRepository.save(userProject);
-
     return userProject;
   }
 
