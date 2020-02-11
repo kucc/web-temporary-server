@@ -13,4 +13,8 @@ export class UpdateUserProjectRequestDTO {
   @IsNumber()
   @Max(50)
   public readonly absence: number;
+
+  @IsNumber()
+  @Max(50)
+  public readonly noticedAbsence: number;
 }
