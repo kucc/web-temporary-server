@@ -116,7 +116,7 @@ export class ProjectController {
     }
 
     try {
-      this.projectService.deleteProject(project);
+      this.projectService.deleteProject(Id);
     } catch (e) {
       return { result: false };
     }
@@ -306,7 +306,7 @@ export class ProjectController {
     }
 
     try {
-      await this.userProjectService.deleteUserProject(userProject);
+      await this.userProjectService.deleteUserProject(userProject.Id);
     } catch (e) {
       return { result: false };
     }

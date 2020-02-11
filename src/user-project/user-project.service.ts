@@ -77,8 +77,7 @@ export class UserProjectService {
     return newUserProject;
   }
 
-  public async deleteUserProject(userProject: UserProjectEntity) {
-    userProject.status = false;
-    await this.userProjectRepository.save(userProject);
+  public async deleteUserProject(Id: number) {
+    await this.userProjectRepository.update(Id, { status: false });
   }
 }
