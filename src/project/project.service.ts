@@ -47,8 +47,7 @@ export class ProjectService {
     return newProject;
   }
 
-  public async deleteProject(deletedProject: ProjectEntity) {
-    deletedProject.status = false;
-    await this.projectRepository.save(deletedProject);
+  public async deleteProject(Id: number) {
+    await this.projectRepository.update(Id, { status: false });
   }
 }
