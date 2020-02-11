@@ -236,7 +236,7 @@ export class ProjectController {
     }
 
     if (requestUserId !== project.userId) {
-      throw new UnauthorizedException('유효한 접근이 아닙니다.');
+      throw new UnauthorizedException('접근 권한이 제한됩니다.');
     }
 
     const user = await this.userService.findUserById(userId);
@@ -291,8 +291,6 @@ export class ProjectController {
     if (userId !== requestUserId) {
       throw new UnauthorizedException(`유효한 접근이 아닙니다.`);
     }
-
-    console.log(userId, projectId);
 
     const userProject = await this.userProjectService.findUserProjectById(
       projectId,
