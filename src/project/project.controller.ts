@@ -28,7 +28,6 @@ import { UpdateUserProjectRequestDTO } from '../user-project/dto/user-project-up
 import { AttendanceRequestDTO } from '../user-project-attendance/dto/attendance-request.dto';
 import { AttendanceResponseDTO } from '../user-project-attendance/dto/attendance-response.dto';
 import { AttendanceListResponseDTO } from '../user-project-attendance/dto/attendance-list-response.dto';
-import { threadId } from 'worker_threads';
 import { UpdateAttendanceRequestDTO } from '../user-project-attendance/dto/attendance-update-request.dto';
 
 @Controller('project')
@@ -587,9 +586,6 @@ export class ProjectController {
     );
 
     const newType = updateAttendanceRequestDTO.type;
-
-    console.log(oldType);
-    console.log(newType);
 
     await this.userProjectService.updateAttendanceType(
       userProject.Id,

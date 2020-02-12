@@ -1,7 +1,8 @@
+import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+
 import { AttendanceEntity } from './user-project-attendance.entity';
-import { Repository } from 'typeorm';
 import { AttendanceRequestDTO } from './dto/attendance-request.dto';
 import { UpdateAttendanceRequestDTO } from './dto/attendance-update-request.dto';
 
@@ -44,7 +45,6 @@ export class AttendanceService {
     attendanceRequestDTO: AttendanceRequestDTO,
   ): Promise<AttendanceEntity> {
     attendanceRequestDTO.userProjectId = userProjectId;
-
     const attendance = this.attendanceRepository.create(attendanceRequestDTO);
     await this.attendanceRepository.save(attendance);
     return attendance;

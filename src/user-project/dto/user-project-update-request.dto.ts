@@ -1,5 +1,4 @@
 import { Max, IsNumber } from 'class-validator';
-// import { ProjectEntity } from '../../project/project.entity';
 
 export class UpdateUserProjectRequestDTO {
   @IsNumber()
