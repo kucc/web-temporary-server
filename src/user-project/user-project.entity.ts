@@ -52,11 +52,11 @@ export class UserProjectEntity extends Base {
   public project: ProjectEntity;
 
   @Column({
-    name: 'attendance',
+    name: 'attend',
     type: 'int',
     default: 0,
   })
-  public attendance: number;
+  public attend: number;
 
   @Column({
     name: 'late',
@@ -66,18 +66,18 @@ export class UserProjectEntity extends Base {
   public late: number;
 
   @Column({
-    name: 'absence',
+    name: 'absent',
     type: 'int',
     default: 0,
   })
-  public absence: number;
+  public absent: number;
 
   @Column({
-    name: 'noticedAbsence',
+    name: 'noticedAbsent',
     type: 'int',
     default: 0,
   })
-  public noticedAbsence: number;
+  public noticedAbsent: number;
 
   @OneToMany(
     type => AttendanceEntity,

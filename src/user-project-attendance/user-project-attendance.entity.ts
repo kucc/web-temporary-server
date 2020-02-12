@@ -2,8 +2,7 @@ import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 
 import { Base } from '../common/entity/base.entity';
 import { UserProjectEntity } from '../user-project/user-project.entity';
-import { AttendanceTypeEntity } from '../common/entity/attendance-type.entity';
-import { AttendanceResponseDTO } from './dto/attendance-response.dto';
+import { ATTENDANCE_TYPE } from '../constants';
 
 @Entity({
   name: 'Attendances',
@@ -15,11 +14,20 @@ export class AttendanceEntity extends Base {
   })
   public description: string;
 
-  // @Column({
-  //   name: 'publishedAt',
-  //   type: 'date',
-  // })
-  // public publishedAt: string;
+  @Column({
+    name: 'publishedAt',
+    type: 'date',
+    nullable: false,
+  })
+  public publishedAt: string;
+
+  @Column({
+    name: 'type',
+    type: 'varchar',
+    length: 100,
+    nullable: true,
+  })
+  public type: ATTENDANCE_TYPE;
 
   @Column({
     name: 'userProjectId',
@@ -37,21 +45,4 @@ export class AttendanceEntity extends Base {
     referencedColumnName: 'Id',
   })
   public userProject: UserProjectEntity;
-
-  @Column({
-    name: 'attendanceTypeId',
-    type: 'int',
-    nullable: false,
-  })
-  public attendanceTypeId: number;
-
-  @ManyToOne(
-    type => AttendanceTypeEntity,
-    attendanceType => attendanceType.Id,
-  )
-  @JoinColumn({
-    name: 'attendanceTypeId',
-    referencedColumnName: 'Id',
-  })
-  public attendanceType: AttendanceTypeEntity;
 }

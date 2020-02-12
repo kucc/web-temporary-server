@@ -4,7 +4,7 @@ import { Max, IsNumber } from 'class-validator';
 export class UpdateUserProjectRequestDTO {
   @IsNumber()
   @Max(50)
-  public readonly attendance: number;
+  public readonly attend: number;
 
   @IsNumber()
   @Max(50)
@@ -12,9 +12,9 @@ export class UpdateUserProjectRequestDTO {
 
   @IsNumber()
   @Max(50)
-  public readonly absence: number;
+  public readonly absent: number;
 
   @IsNumber()
   @Max(50)
-  public readonly noticedAbsence: number;
+  public readonly noticedAbsent: number;
 }
