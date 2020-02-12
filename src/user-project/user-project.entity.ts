@@ -79,6 +79,13 @@ export class UserProjectEntity extends Base {
   })
   public noticedAbsent: number;
 
+  @Column({
+    name: 'totalLate',
+    type: 'int',
+    default: 0,
+  })
+  public totalLate: number;
+
   @OneToMany(
     type => AttendanceEntity,
     AttendanceEntity => AttendanceEntity.userProjectId,

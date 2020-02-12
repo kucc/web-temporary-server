@@ -9,6 +9,7 @@ export class AttendanceListResponseDTO {
         publishedAt: attendance.publishedAt,
         description: attendance.description,
         type: attendance.type,
+        lateTime: attendance.lateTime,
       };
     });
   }

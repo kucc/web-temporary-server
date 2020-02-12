@@ -1,4 +1,4 @@
-import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn, Unique } from 'typeorm';
 
 import { Base } from '../common/entity/base.entity';
 import { UserProjectEntity } from '../user-project/user-project.entity';
@@ -7,6 +7,7 @@ import { ATTENDANCE_TYPE } from '../constants';
 @Entity({
   name: 'Attendances',
 })
+@Unique(['userProjectId', 'publishedAt'])
 export class AttendanceEntity extends Base {
   @Column({
     name: 'description',
@@ -28,6 +29,13 @@ export class AttendanceEntity extends Base {
     nullable: true,
   })
   public type: ATTENDANCE_TYPE;
+
+  @Column({
+    name: 'lateTime',
+    type: 'int',
+    default: 0,
+  })
+  public lateTime: number;
 
   @Column({
     name: 'userProjectId',

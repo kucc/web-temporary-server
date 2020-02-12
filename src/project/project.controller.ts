@@ -467,9 +467,11 @@ export class ProjectController {
       attendanceRequestDTO,
     );
 
-    const attendanceType = attendance.type;
-
-    this.userProjectService.checkAttendanceType(userProject.Id, attendanceType);
+    this.userProjectService.incrementTotalAttendance(
+      userProject.Id,
+      attendance.type,
+      attendance.lateTime,
+    );
 
     if (!attendance) {
       throw new NotFoundException(`출석 체크를 실패했습니다.`);
@@ -524,7 +526,15 @@ export class ProjectController {
       throw new NotFoundException(`출석 내역이 존재하지 않습니다.`);
     }
 
+    const deletedType = attend.type;
+    const deletedLateTime = attend.lateTime;
+
     try {
+      await this.userProjectService.decrementTotalAttendance(
+        userProject.Id,
+        deletedType,
+        deletedLateTime,
+      );
       await this.attendanceService.deleteAttendanceById(attend.Id);
     } catch (e) {
       return { result: false };
@@ -579,6 +589,7 @@ export class ProjectController {
       throw new NotFoundException(`출석 내역이 존재하지 않습니다.`);
     }
     const oldType = attend.type;
+    const oldLateTime = attend.lateTime;
 
     const updatedAttend = await this.attendanceService.updateAttendance(
       attend,
@@ -586,6 +597,13 @@ export class ProjectController {
     );
 
     const newType = updateAttendanceRequestDTO.type;
+    const newLateTime = updateAttendanceRequestDTO.lateTime;
+
+    await this.userProjectService.updateTotalLateTime(
+      userProject.Id,
+      oldLateTime,
+      newLateTime,
+    );
 
     await this.userProjectService.updateAttendanceType(
       userProject.Id,

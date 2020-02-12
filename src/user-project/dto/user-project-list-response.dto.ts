@@ -11,6 +11,7 @@ export class UserProjectListResponseDTO {
         late: userProject.late,
         absent: userProject.absent,
         noticedAbsent: userProject.noticedAbsent,
+        totalLate: userProject.totalLate,
       };
     });
   }

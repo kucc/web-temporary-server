@@ -16,4 +16,8 @@ export class UpdateUserProjectRequestDTO {
   @IsNumber()
   @Max(50)
   public readonly noticedAbsent: number;
+
+  @IsNumber()
+  @Max(20)
+  public readonly totalLate: number;
 }

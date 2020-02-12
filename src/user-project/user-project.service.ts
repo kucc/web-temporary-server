@@ -91,8 +91,24 @@ export class UserProjectService {
     return { result: true };
   }
 
-  public async checkAttendanceType(Id: number, type: string) {
+  public async incrementTotalAttendance(
+    Id: number,
+    type: string,
+    lateTime: number,
+  ) {
     await this.userProjectRepository.increment({ Id }, type, 1);
+    await this.userProjectRepository.increment({ Id }, 'totalLate', lateTime);
+
+    return { result: true };
+  }
+
+  public async decrementTotalAttendance(
+    Id: number,
+    type: string,
+    lateTime: number,
+  ) {
+    await this.userProjectRepository.decrement({ Id }, type, 1);
+    await this.userProjectRepository.decrement({ Id }, 'totalLate', lateTime);
 
     return { result: true };
   }
@@ -104,6 +120,25 @@ export class UserProjectService {
   ) {
     await this.userProjectRepository.decrement({ Id }, oldType, 1);
     await this.userProjectRepository.increment({ Id }, newType, 1);
+
+    return { result: true };
+  }
+
+  public async updateTotalLateTime(
+    Id: number,
+    oldLateTime: number,
+    newLateTime: number,
+  ) {
+    await this.userProjectRepository.decrement(
+      { Id },
+      'totalLate',
+      oldLateTime,
+    );
+    await this.userProjectRepository.increment(
+      { Id },
+      'totalLate',
+      newLateTime,
+    );
 
     return { result: true };
   }

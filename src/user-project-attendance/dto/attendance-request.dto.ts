@@ -1,4 +1,4 @@
-import { IsNumber, IsEmpty, IsNotEmpty } from 'class-validator';
+import { IsNumber, IsEmpty, IsNotEmpty, Max } from 'class-validator';
 import { ATTENDANCE_TYPE } from '../../constants';
 
 export class AttendanceRequestDTO {
@@ -7,6 +7,10 @@ export class AttendanceRequestDTO {
 
   @IsNotEmpty()
   public readonly type: ATTENDANCE_TYPE;
+
+  @IsNumber()
+  @Max(20)
+  public readonly lateTime: number;
 
   @IsNotEmpty()
   public readonly publishedAt: string;
