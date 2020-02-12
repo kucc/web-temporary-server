@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { UserProjectEntity } from './user-project.entity';
 import { ProjectEntity } from '../project/project.entity';
-import { UserProjectRequestDTO } from './dto/user-project-request.dto';
 import { UpdateUserProjectRequestDTO } from './dto/user-project-update-request.dto';
 
 @Injectable()
@@ -22,6 +21,19 @@ export class UserProjectService {
       where: {
         userId,
         projectId,
+        status: true,
+      },
+    });
+
+    return userProject;
+  }
+
+  public async findUserProjectByUserProjectId(
+    Id: number,
+  ): Promise<UserProjectEntity> {
+    const userProject = await this.userProjectRepository.findOne({
+      where: {
+        Id,
         status: true,
       },
     });
@@ -76,5 +88,23 @@ export class UserProjectService {
 
   public async deleteUserProject(Id: number) {
     await this.userProjectRepository.update(Id, { status: false });
+    return { result: true };
+  }
+
+  public async checkAttendanceType(Id: number, type: string) {
+    await this.userProjectRepository.increment({ Id }, type, 1);
+
+    return { result: true };
+  }
+
+  public async updateAttendanceType(
+    Id: number,
+    oldType: string,
+    newType: string,
+  ) {
+    await this.userProjectRepository.decrement({ Id }, oldType, 1);
+    await this.userProjectRepository.increment({ Id }, newType, 1);
+
+    return { result: true };
   }
 }

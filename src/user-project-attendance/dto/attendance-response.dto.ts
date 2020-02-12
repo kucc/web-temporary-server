@@ -1,16 +1,16 @@
 import { AttendanceEntity } from '../user-project-attendance.entity';
 
 export class AttendanceResponseDTO {
-  public constructor(attendace: AttendanceEntity) {
-    this.Id = attendace.Id;
-    this.createdAt = attendace.createdAt;
-    this.userProjectId = attendace.userProjectId;
-    this.description = attendace.description;
-    this.attendanceTypeId = attendace.attendanceTypeId;
+  public constructor(attendance: AttendanceEntity) {
+    this.Id = attendance.Id;
+    this.publishedAt = attendance.publishedAt;
+    this.userProjectId = attendance.userProjectId;
+    this.description = attendance.description;
+    this.type = attendance.type;
   }
   public readonly Id: number;
-  public readonly createdAt: string;
+  public readonly publishedAt: string;
   public readonly userProjectId: number;
-  public readonly attendanceTypeId: number;
+  public readonly type: string;
   public readonly description: string;
 }

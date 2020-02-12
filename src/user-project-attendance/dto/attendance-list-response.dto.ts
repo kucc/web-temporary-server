@@ -6,9 +6,9 @@ export class AttendanceListResponseDTO {
     this.data = attendances.map(attendance => {
       return {
         Id: attendance.Id,
-        createdAt: attendance.createdAt,
+        publishedAt: attendance.publishedAt,
         description: attendance.description,
-        attendanceType: attendance.attendanceTypeId,
+        type: attendance.type,
       };
     });
   }

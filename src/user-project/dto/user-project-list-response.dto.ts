@@ -7,10 +7,10 @@ export class UserProjectListResponseDTO {
       return {
         Id: userProject.Id,
         userId: userProject.userId,
-        attendance: userProject.attendance,
+        attend: userProject.attend,
         late: userProject.late,
-        absence: userProject.absence,
-        noticedAbsence: userProject.noticedAbsence,
+        absent: userProject.absent,
+        noticedAbsent: userProject.noticedAbsent,
       };
     });
   }

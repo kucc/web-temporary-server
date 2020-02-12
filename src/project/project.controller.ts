@@ -466,10 +466,135 @@ export class ProjectController {
       attendanceRequestDTO,
     );
 
+    const attendanceType = attendance.type;
+
+    this.userProjectService.checkAttendanceType(userProject.Id, attendanceType);
+
     if (!attendance) {
       throw new NotFoundException(`출석 체크를 실패했습니다.`);
     }
 
     return new AttendanceResponseDTO(attendance);
+  }
+
+  @Delete(':projectId/user/:userId/attend/:attendId')
+  @UseGuards(OnlyMemberGuard)
+  async deleteAttendance(
+    @Param('projectId', ValidateIdPipe) projectId: number,
+    @Param('userId', ValidateIdPipe) userId: number,
+    @Param('attendId', ValidateIdPipe) attendId: number,
+    @Req() req: Request,
+  ) {
+    const project = await this.projectService.findProjectById(projectId);
+    if (!project) {
+      throw new NotFoundException(
+        `id가 ${projectId}에 해당하는 프로젝트가 존재하지 않습니다.`,
+      );
+    }
+
+    const reqUserId = req.user.Id;
+    if (reqUserId !== project.userId) {
+      throw new UnauthorizedException(`유효하지 않은 접근입니다.`);
+    }
+
+    const user = await this.userService.findUserById(userId);
+    if (!user) {
+      throw new NotFoundException(
+        `id가 ${userId}에 해당하는 사용자가 존재하지 않습니다.`,
+      );
+    }
+
+    const userProject = await this.userProjectService.findUserProjectById(
+      projectId,
+      userId,
+    );
+    if (!userProject) {
+      throw new NotFoundException(
+        `${userId}번 사용자가 ${projectId}번 프로젝트에 참여하지 않습니다.`,
+      );
+    }
+
+    const attend = await this.attendanceService.findAttendanceById(
+      userProject.Id,
+      attendId,
+    );
+
+    if (!attend) {
+      throw new NotFoundException(`출석 내역이 존재하지 않습니다.`);
+    }
+
+    try {
+      await this.attendanceService.deleteAttendanceById(attend.Id);
+    } catch (e) {
+      return { result: false };
+    }
+
+    return { result: true }; //보류
+  }
+
+  @Put(':projectId/user/:userId/attend/:attendId')
+  @UseGuards(OnlyMemberGuard)
+  async updateAttendance(
+    @Param('projectId', ValidateIdPipe) projectId: number,
+    @Param('userId', ValidateIdPipe) userId: number,
+    @Param('attendId', ValidateIdPipe) attendId: number,
+    @Body() updateAttendanceRequestDTO: UpdateAttendanceRequestDTO,
+    @Req() req: Request,
+  ): Promise<AttendanceResponseDTO> {
+    const project = await this.projectService.findProjectById(projectId);
+    if (!project) {
+      throw new NotFoundException(
+        `id가 ${projectId}에 해당하는 프로젝트가 존재하지 않습니다.`,
+      );
+    }
+
+    const reqUserId = req.user.Id;
+    if (reqUserId !== project.userId) {
+      throw new UnauthorizedException(`유효하지 않은 접근입니다.`);
+    }
+
+    const user = await this.userService.findUserById(userId);
+    if (!user) {
+      throw new NotFoundException(
+        `id가 ${userId}에 해당하는 사용자가 존재하지 않습니다.`,
+      );
+    }
+
+    const userProject = await this.userProjectService.findUserProjectById(
+      projectId,
+      userId,
+    );
+    if (!userProject) {
+      throw new NotFoundException(
+        `${userId}번 사용자가 ${projectId}번 프로젝트에 참여하지 않습니다.`,
+      );
+    }
+
+    const attend = await this.attendanceService.findAttendanceById(
+      userProject.Id,
+      attendId,
+    );
+    if (!attend) {
+      throw new NotFoundException(`출석 내역이 존재하지 않습니다.`);
+    }
+    const oldType = attend.type;
+
+    const updatedAttend = await this.attendanceService.updateAttendance(
+      attend,
+      updateAttendanceRequestDTO,
+    );
+
+    const newType = updateAttendanceRequestDTO.type;
+
+    console.log(oldType);
+    console.log(newType);
+
+    await this.userProjectService.updateAttendanceType(
+      userProject.Id,
+      oldType,
+      newType,
+    );
+
+    return new AttendanceResponseDTO(updatedAttend);
   }
 }
