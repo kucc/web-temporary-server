@@ -6,10 +6,11 @@ import {
   OneToMany,
   Unique,
 } from 'typeorm';
+
 import { UserEntity } from '../user/user.entity';
-import { ProjectEntity } from '../project/project.entity';
 import { Base } from '../common/entity/base.entity';
-import { UserProjectAttendanceEntity } from '../user-project-attendance/user-project-attendance.entity';
+import { ProjectEntity } from '../project/project.entity';
+import { AttendanceEntity } from '../user-project-attendance/user-project-attendance.entity';
 
 @Entity({
   name: 'UserProjects',
@@ -51,11 +52,11 @@ export class UserProjectEntity extends Base {
   public project: ProjectEntity;
 
   @Column({
-    name: 'attendance',
+    name: 'attend',
     type: 'int',
     default: 0,
   })
-  public attendance: number;
+  public attend: number;
 
   @Column({
     name: 'late',
@@ -65,15 +66,29 @@ export class UserProjectEntity extends Base {
   public late: number;
 
   @Column({
-    name: 'absence',
+    name: 'absent',
     type: 'int',
     default: 0,
   })
-  public absence: number;
+  public absent: number;
+
+  @Column({
+    name: 'noticedAbsent',
+    type: 'int',
+    default: 0,
+  })
+  public noticedAbsent: number;
+
+  @Column({
+    name: 'totalLate',
+    type: 'int',
+    default: 0,
+  })
+  public totalLate: number;
 
   @OneToMany(
-    type => UserProjectAttendanceEntity,
-    userProjectAttendanceEntity => userProjectAttendanceEntity.userProjectId,
+    type => AttendanceEntity,
+    AttendanceEntity => AttendanceEntity.userProjectId,
   )
-  public attendances: UserProjectAttendanceEntity[];
+  public attendances: AttendanceEntity[];
 }

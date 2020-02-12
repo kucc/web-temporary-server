@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { UserProjectEntity } from './user-project.entity';
 import { ProjectEntity } from '../project/project.entity';
-import { UserProjectRequestDTO } from './dto/user-project-request.dto';
 import { UpdateUserProjectRequestDTO } from './dto/user-project-update-request.dto';
 
 @Injectable()
@@ -22,6 +21,19 @@ export class UserProjectService {
       where: {
         userId,
         projectId,
+        status: true,
+      },
+    });
+
+    return userProject;
+  }
+
+  public async findUserProjectByUserProjectId(
+    Id: number,
+  ): Promise<UserProjectEntity> {
+    const userProject = await this.userProjectRepository.findOne({
+      where: {
+        Id,
         status: true,
       },
     });
@@ -50,16 +62,13 @@ export class UserProjectService {
   public async createUserProject(
     userId: number,
     projectId: number,
-    userProjectRequestDTO: UserProjectRequestDTO,
   ): Promise<UserProjectEntity> {
-    userProjectRequestDTO.projectId = projectId;
-    userProjectRequestDTO.userId = userId;
+    const userProject = this.userProjectRepository.create({
+      userId,
+      projectId,
+    });
 
-    const userProject = this.userProjectRepository.create(
-      userProjectRequestDTO,
-    );
     await this.userProjectRepository.save(userProject);
-
     return userProject;
   }
 
@@ -77,8 +86,60 @@ export class UserProjectService {
     return newUserProject;
   }
 
-  public async deleteUserProject(userProject: UserProjectEntity) {
-    userProject.status = false;
-    await this.userProjectRepository.save(userProject);
+  public async deleteUserProject(Id: number) {
+    await this.userProjectRepository.update(Id, { status: false });
+    return { result: true };
+  }
+
+  public async incrementTotalAttendance(
+    Id: number,
+    type: string,
+    lateTime: number,
+  ) {
+    await this.userProjectRepository.increment({ Id }, type, 1);
+    await this.userProjectRepository.increment({ Id }, 'totalLate', lateTime);
+
+    return { result: true };
+  }
+
+  public async decrementTotalAttendance(
+    Id: number,
+    type: string,
+    lateTime: number,
+  ) {
+    await this.userProjectRepository.decrement({ Id }, type, 1);
+    await this.userProjectRepository.decrement({ Id }, 'totalLate', lateTime);
+
+    return { result: true };
+  }
+
+  public async updateAttendanceType(
+    Id: number,
+    oldType: string,
+    newType: string,
+  ) {
+    await this.userProjectRepository.decrement({ Id }, oldType, 1);
+    await this.userProjectRepository.increment({ Id }, newType, 1);
+
+    return { result: true };
+  }
+
+  public async updateTotalLateTime(
+    Id: number,
+    oldLateTime: number,
+    newLateTime: number,
+  ) {
+    await this.userProjectRepository.decrement(
+      { Id },
+      'totalLate',
+      oldLateTime,
+    );
+    await this.userProjectRepository.increment(
+      { Id },
+      'totalLate',
+      newLateTime,
+    );
+
+    return { result: true };
   }
 }

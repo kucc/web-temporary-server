@@ -16,7 +16,6 @@ import { CommentModule } from './comment/comment.module';
     UserModule,
     AuthModule,
     ProjectModule,
-    UserProjectModule,
     PostModule,
     CommentModule,
   ],
