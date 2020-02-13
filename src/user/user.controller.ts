@@ -53,7 +53,7 @@ export class UserController {
   }
 
   @Get('/:Id/post')
-  async getPostByUserId(
+  async getPostsByUserId(
     @Param('Id', ValidateIdPipe) Id: number,
     @Query('page', ValidateIdPipe) page: number = 1,
   ) {
