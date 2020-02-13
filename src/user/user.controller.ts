@@ -71,7 +71,10 @@ export class UserController {
       throw new NotFoundException(`${page} 페이지가 존재하지 않습니다.`);
     }
 
-    return new GetPostListResponseDTO(posts);
+    const options = { where: { status: true, userId: Id } };
+    const totalCount = await this.postService.getNumberOfPosts(options);
+
+    return new GetPostListResponseDTO(posts, totalCount);
   }
 
   @Get('/:Id')
