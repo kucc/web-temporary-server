@@ -72,7 +72,7 @@ export class PostService {
 
     const posts = await this.postRepository.find({
       where: { status: true },
-      order: { createdAt: 'DESC' },
+      order: { Id: 'DESC' },
       skip,
       take,
     });
