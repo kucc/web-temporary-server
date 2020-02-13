@@ -66,28 +66,28 @@ export class PostService {
     return { return: true };
   }
 
-  public async findPostsByPage(page: number): Promise<PostEntity[]> {
+  public async findPostsByPage(page: number): Promise<[PostEntity[], number]> {
     const skip = (page - 1) * POSTS_PER_PAGE;
     const take = POSTS_PER_PAGE;
 
-    const posts = await this.postRepository.find({
+    const result = await this.postRepository.findAndCount({
       where: { status: true },
       order: { Id: 'DESC' },
       skip,
       take,
     });
 
-    return posts;
+    return result;
   }
 
   public async findPostsByUserId(
     userId: number,
     page: number,
-  ): Promise<PostEntity[]> {
+  ): Promise<[PostEntity[], number]> {
     const skip = (page - 1) * POSTS_PER_PAGE;
     const take = POSTS_PER_PAGE;
 
-    const posts = await this.postRepository.find({
+    const result = await this.postRepository.findAndCount({
       where: {
         status: true,
         userId,
@@ -97,14 +97,6 @@ export class PostService {
       take,
     });
 
-    return posts;
-  }
-
-  public async getNumberOfPosts(
-    options?: FindManyOptions<PostEntity>,
-  ): Promise<number> {
-    const count = await this.postRepository.count(options);
-
-    return count;
+    return result;
   }
 }

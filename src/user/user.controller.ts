@@ -65,16 +65,13 @@ export class UserController {
       );
     }
 
-    const posts = await this.postService.findPostsByUserId(Id, page);
+    const [posts, count] = await this.postService.findPostsByUserId(Id, page);
 
     if (!posts.length) {
       throw new NotFoundException(`${page} 페이지가 존재하지 않습니다.`);
     }
 
-    const options = { where: { status: true, userId: Id } };
-    const totalCount = await this.postService.getNumberOfPosts(options);
-
-    return new GetPostListResponseDTO(posts, totalCount);
+    return new GetPostListResponseDTO(posts, count);
   }
 
   @Get('/:Id')
