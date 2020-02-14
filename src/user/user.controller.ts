@@ -53,7 +53,7 @@ export class UserController {
   }
 
   @Get('/:Id/post')
-  async getPostByUserId(
+  async getPostsByUserId(
     @Param('Id', ValidateIdPipe) Id: number,
     @Query('page', ValidateIdPipe) page: number = 1,
   ) {
@@ -65,13 +65,13 @@ export class UserController {
       );
     }
 
-    const posts = await this.postService.findPostsByUserId(Id, page);
+    const [posts, count] = await this.postService.findPostsByUserId(Id, page);
 
     if (!posts.length) {
       throw new NotFoundException(`${page} 페이지가 존재하지 않습니다.`);
     }
 
-    return new GetPostListResponseDTO(posts);
+    return new GetPostListResponseDTO(posts, count);
   }
 
   @Get('/:Id')
