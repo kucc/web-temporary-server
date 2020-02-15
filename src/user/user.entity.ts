@@ -62,6 +62,14 @@ export class UserEntity extends Base {
   public isAdmin: boolean;
 
   @Column({
+    name: 'avatar',
+    type: 'varchar',
+    length: 2048,
+    nullable: true,
+  })
+  public avatar: string;
+
+  @Column({
     name: 'description',
     type: 'text',
     nullable: true,

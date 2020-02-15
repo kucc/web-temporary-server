@@ -5,6 +5,7 @@ export class UserResponseDTO {
     this.Id = user.Id;
     this.email = user.email;
     this.name = user.name;
+    this.avatar = user.avatar;
     this.nickname = user.nickname;
     this.isAdmin = user.isAdmin;
     this.description = user.description;
@@ -12,6 +13,7 @@ export class UserResponseDTO {
   public readonly Id: number;
   public readonly email: string;
   public readonly name: string;
+  public readonly avatar: string;
   public readonly nickname: string;
   public readonly isAdmin: boolean;
   public readonly description: string;
