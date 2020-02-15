@@ -56,7 +56,7 @@ export class UserService {
 
   public async updateUser(
     user: UserEntity,
-    userUpdateRequestDTO: UserUpdateRequestDTO,
+    userUpdateRequestDTO: Partial<UserEntity>,
   ): Promise<UserEntity> {
     const updatedUser = this.userRepository.merge(user, userUpdateRequestDTO);
 
