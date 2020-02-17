@@ -2,9 +2,10 @@ import { Entity, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 
 import { UserEntity } from '../user/user.entity';
 import { Base } from '../common/entity/base.entity';
-import { PostTypeEntity } from '../common/entity/post-type.entity';
-import { PostLikeEntity } from '../post-like/post-like.entity';
 import { CommentEntity } from '../comment/comment.entity';
+import { ImageEntity } from '../image/image.entity';
+import { PostLikeEntity } from '../post-like/post-like.entity';
+import { PostTypeEntity } from '../common/entity/post-type.entity';
 
 @Entity({
   name: 'Posts',
@@ -84,4 +85,10 @@ export class PostEntity extends Base {
     comment => comment.postId,
   )
   public comments: CommentEntity[];
+
+  @OneToMany(
+    type => ImageEntity,
+    image => image.postId,
+  )
+  public images: ImageEntity[];
 }
