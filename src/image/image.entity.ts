@@ -17,18 +17,18 @@ export class ImageEntity extends Base {
 
   @Column({
     name: 'url',
-    type: 'string',
+    type: 'varchar',
     length: 500,
     nullable: false,
   })
   public url: string;
 
   @Column({
-    name: 'IsRepresentative',
+    name: 'isRepresentative',
     type: 'boolean',
-    default: true,
+    default: false,
   })
-  public IsRepresentative: boolean;
+  public isRepresentative: boolean;
 
   @Column({
     name: 'postId',
