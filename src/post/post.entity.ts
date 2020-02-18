@@ -88,7 +88,7 @@ export class PostEntity extends Base {
 
   @OneToMany(
     type => ImageEntity,
-    image => image.postId,
+    image => image.post,
   )
   public images: ImageEntity[];
 }
