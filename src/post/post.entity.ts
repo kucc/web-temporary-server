@@ -3,9 +3,9 @@ import { Entity, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 import { UserEntity } from '../user/user.entity';
 import { Base } from '../common/entity/base.entity';
 import { CommentEntity } from '../comment/comment.entity';
-import { ImageEntity } from '../image/image.entity';
 import { PostLikeEntity } from '../post-like/post-like.entity';
 import { PostTypeEntity } from '../common/entity/post-type.entity';
+import { ImageEntity } from '../image/image.entity';
 
 @Entity({
   name: 'Posts',

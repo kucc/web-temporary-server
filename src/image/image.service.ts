@@ -15,19 +15,20 @@ export class ImageService {
   ) {}
 
   public async findImagesByPage(page: number): Promise<PostEntity[]> {
+  public async getImagesByPage(page: number): Promise<ImageEntity[]> {
     const skip = (page - 1) * IMAGES_PER_PAGE;
     const take = IMAGES_PER_PAGE;
 
-    const postWithImages = await getRepository(PostEntity)
-      .createQueryBuilder('post')
-      .leftJoinAndSelect('post.images', 'image')
-      .where('post.status=:status', { status: true })
-      .andWhere('post.postTypeId=:postTypeId', { postTypeId: 4 })
-      .andWhere('image.status = :status', { status: true })
-      .andWhere('image.IsRepresentative = :IsRepresentative', {
-        IsRepresentative: true,
-      })
-      .getMany();
+    const images = await this.imageRepository.find({
+      where: { status: true, isRepresentative: true },
+      order: { createdAt: 'DESC' },
+      skip,
+      take,
+    });
+
+    return images;
+  }
+
 
     return postWithImages;
   }

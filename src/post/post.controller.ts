@@ -16,6 +16,8 @@ import {
 import { Request } from 'express';
 
 import { PostService } from './post.service';
+import { ImageEntity } from '../image/image.entity';
+import { ImageService } from '../image/image.service';
 import { EditPostBodyDTO } from './dto/edit-post-body.dto';
 import { CommentService } from '../comment/comment.service';
 import { CreatePostBodyDTO } from './dto/create-post-body.dto';
@@ -27,6 +29,7 @@ import { GetPostListResponseDTO } from './dto/get-post-list-response.dto';
 import { CreateCommentBodyDTO } from '../comment/dto/create-comment-body.dto';
 import { GetCommentResponseDTO } from '../comment/dto/get-comment-response.dto';
 import { GetCommentListResponseDTO } from '../comment/dto/get-comment-list-response.dto';
+import { ImageListResponseDTO } from '../image/dto/image-list-response.dto';
 
 @Controller('post')
 export class PostController {
@@ -34,6 +37,7 @@ export class PostController {
     private readonly postService: PostService,
     private readonly postLikeService: PostLikeService,
     private readonly commentService: CommentService,
+    private readonly imageService: ImageService,
   ) {}
 
   @Get(':Id')
@@ -239,4 +243,15 @@ export class PostController {
 
     return new GetPostListResponseDTO(posts, count);
   }
-}
+  @Get('image')
+  async getImagePostsByPage(
+    @Query('page', ValidateIdPipe) page: number = 1,
+  ): Promise<ImageListResponseDTO> {
+    const images = await this.imageService.getImagesByPage(page);
+
+    if (!images.length) {
+      throw new NotFoundException(`${page} 페이지가 존재하지 않습니다.`);
+    }
+
+    return new ImageListResponseDTO(images);
+  }
