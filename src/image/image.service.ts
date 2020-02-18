@@ -1,20 +1,27 @@
-import { Repository, getRepository, createQueryBuilder } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { ImageEntity } from './image.entity';
 import { IMAGES_PER_PAGE } from '../constants';
-import { PostEntity } from '../post/post.entity';
+import { CreateImageBodyDTO } from './dto/create-image-body.dto';
 
 @Injectable()
 export class ImageService {
   public constructor(
     @InjectRepository(ImageEntity)
     private readonly imageRepository: Repository<ImageEntity>,
-    private readonly postRepository: Repository<PostEntity>,
   ) {}
 
-  public async findImagesByPage(page: number): Promise<PostEntity[]> {
+  public async findImage(Id: number): Promise<ImageEntity> {
+    return await this.imageRepository.findOne({
+      where: {
+        Id,
+        status: true,
+      },
+    });
+  }
+
   public async getImagesByPage(page: number): Promise<ImageEntity[]> {
     const skip = (page - 1) * IMAGES_PER_PAGE;
     const take = IMAGES_PER_PAGE;
@@ -29,7 +36,40 @@ export class ImageService {
     return images;
   }
 
+  public async uploadImage(
+    createImageBodyDTO: CreateImageBodyDTO,
+    postId: number,
+  ): Promise<ImageEntity> {
+    createImageBodyDTO.postId = postId;
+    const image = this.imageRepository.create(createImageBodyDTO);
+    await this.imageRepository.save(image);
 
-    return postWithImages;
+    return image;
+  }
+
+  public async deleteImage(Id: number) {
+    await this.imageRepository.update(Id, { status: false });
+
+    return { result: true };
+  }
+
+  public async makeImageList(postId: number): Promise<ImageEntity[]> {
+    const images = await this.imageRepository.find({
+      where: {
+        postId: postId,
+        status: true,
+      },
+      order: { Id: 'ASC' },
+    });
+
+    return images;
+  }
+
+  public async setRepresentative(Id: number) {
+    // 대표이미지 설정하기
+    //올린 이미지 리스트 중 제일 앞에 위치한 것이 대표 이미지가 된다.
+    await this.imageRepository.update(Id, { isRepresentative: true });
+
+    return { result: true };
   }
 }

@@ -3,9 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { PostEntity } from './post.entity';
-import { POSTS_PER_PAGE } from '../constants';
+import { POSTS_PER_PAGE, IMAGES_PER_PAGE } from '../constants';
 import { EditPostBodyDTO } from './dto/edit-post-body.dto';
 import { CreatePostBodyDTO } from './dto/create-post-body.dto';
+import { UpdateImagePostBodyDTO } from './dto/update-image-post-body.dto';
 
 @Injectable()
 export class PostService {
@@ -98,5 +99,62 @@ export class PostService {
     });
 
     return result;
+  }
+
+  public async findImagePostsByPage(page: number): Promise<PostEntity[]> {
+    const skip = (page - 1) * IMAGES_PER_PAGE;
+    const take = IMAGES_PER_PAGE;
+
+    const postsWithImages = await this.postRepository.find({
+      relations: ['images'],
+      where: {
+        status: true,
+        postTypeId: 4,
+      },
+      order: { createdAt: 'DESC' },
+      skip,
+      take,
+    });
+
+    return postsWithImages;
+  }
+
+  public async findImagePostById(postId: number): Promise<PostEntity> {
+    const postWithImages = await this.postRepository.findOne({
+      relations: ['images'],
+      where: {
+        Id: postId,
+        status: true,
+        postTypeId: 4,
+      },
+    });
+
+    return postWithImages;
+  }
+
+  public async createImagePost(userId: number): Promise<PostEntity> {
+    const imagePost = this.postRepository.create({
+      userId,
+      postTypeId: 4,
+      title: '',
+    });
+
+    await this.postRepository.save(imagePost);
+
+    return imagePost;
+  }
+
+  public async updateImagePost(
+    imagePost: PostEntity,
+    updateImagePostBodyDTO: UpdateImagePostBodyDTO,
+  ): Promise<PostEntity> {
+    const newImagePost = this.postRepository.merge(
+      imagePost,
+      updateImagePostBodyDTO,
+    );
+
+    await this.postRepository.save(newImagePost);
+
+    return newImagePost;
   }
 }
