@@ -263,12 +263,15 @@ export class PostController {
       );
     }
 
-    return new ImagePostResponseDTO(imagePost);
+    await this.postService.incrementViews(postId);
+    const newPostWithImages = await this.postService.findImagePostById(postId);
+
+    return new ImagePostResponseDTO(newPostWithImages);
   }
 
   @Get('image')
   async getImagePostsByPage(
-    @Query('page', ValidateIdPipe) page: number = 1,
+    @Query('page', ValidateIdPipe) page: number,
   ): Promise<ImageListResponseDTO> {
     const images = await this.imageService.getImagesByPage(page);
 
