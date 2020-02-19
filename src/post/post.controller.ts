@@ -416,10 +416,13 @@ export class PostController {
       throw new NotFoundException(`갤러리에 이미지가 존재하지 않습니다.`);
     }
     const firstImage = imageList[0];
-
     await this.imageService.setRepresentative(firstImage.Id);
 
-    return new ImagePostResponseDTO(newImagePost);
+    const finalImagePost = await this.postService.findImagePostById(
+      newImagePost.Id,
+    );
+
+    return new ImagePostResponseDTO(finalImagePost);
   }
 
   @Delete('image/:postId/:imageId')
