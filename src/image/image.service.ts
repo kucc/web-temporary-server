@@ -13,11 +13,12 @@ export class ImageService {
     private readonly imageRepository: Repository<ImageEntity>,
   ) {}
 
-  public async findImage(Id: number): Promise<ImageEntity> {
+  public async findImageById(postId: number, Id: number): Promise<ImageEntity> {
     return await this.imageRepository.findOne({
       where: {
         Id,
         status: true,
+        postId,
       },
     });
   }

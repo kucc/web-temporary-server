@@ -21,9 +21,9 @@ import { ImageService } from '../image/image.service';
 import { EditPostBodyDTO } from './dto/edit-post-body.dto';
 import { CommentService } from '../comment/comment.service';
 import { CreatePostBodyDTO } from './dto/create-post-body.dto';
-import { ValidateIdPipe } from '../common/pipe/validate-id.pipe';
 import { GetPostResponseDTO } from './dto/get-post-response.dto';
 import { PostLikeService } from '../post-like/post-like.service';
+import { ValidateIdPipe } from '../common/pipe/validate-id.pipe';
 import { OnlyMemberGuard } from '../common/guards/only-member.guard';
 import { GetPostListResponseDTO } from './dto/get-post-list-response.dto';
 import { CreateCommentBodyDTO } from '../comment/dto/create-comment-body.dto';
@@ -275,6 +275,28 @@ export class PostController {
     return new ImageListResponseDTO(images);
   }
 
+  @Get('image/:postId/:imageId')
+  async getImageById(
+    @Param('postId', ValidateIdPipe) postId: number,
+    @Param('imageId', ValidateIdPipe) imageId: number,
+  ): Promise<ImageEntity> {
+    const postWithImages = await this.postService.findImagePostById(postId);
+    if (!postWithImages) {
+      throw new NotFoundException(
+        `${postId}번에 해당하는 갤러리가 존재하지 않습니다.`,
+      );
+    }
+
+    const image = await this.imageService.findImageById(postId, imageId);
+    if (!image) {
+      throw new NotFoundException(
+        `${imageId}에 해당하는 이미지가 존재하지 않습니다.`,
+      );
+    }
+
+    return image;
+  }
+
   @Post('image')
   @UseGuards(OnlyMemberGuard)
   async createImagePost(@Req() req: Request): Promise<ImagePostResponseDTO> {
@@ -417,7 +439,7 @@ export class PostController {
       throw new UnauthorizedException(`유효하지 않은 접근입니다.`);
     }
 
-    const image = await this.imageService.findImage(imageId);
+    const image = await this.imageService.findImageById(postId, imageId);
     if (!image) {
       throw new NotFoundException(
         `${imageId}번에 해당하는 이미지가 존재하지 않습니다.`,
