@@ -236,9 +236,13 @@ export class PostController {
 
   @Get('')
   async getPostsByPage(
+    @Query('postTypeId', ValidateIdPipe) postTypeId: number,
     @Query('page', ValidateIdPipe) page: number = 1,
   ): Promise<GetPostListResponseDTO> {
-    const [posts, count] = await this.postService.findPostsByPage(page);
+    const [posts, count] = await this.postService.findPostsByPage(
+      page,
+      postTypeId,
+    );
 
     if (!posts.length) {
       throw new NotFoundException(`${page} 페이지가 존재하지 않습니다.`);

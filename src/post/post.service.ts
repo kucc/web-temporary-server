@@ -67,12 +67,15 @@ export class PostService {
     return { return: true };
   }
 
-  public async findPostsByPage(page: number): Promise<[PostEntity[], number]> {
+  public async findPostsByPage(
+    page: number,
+    postTypeId: number,
+  ): Promise<[PostEntity[], number]> {
     const skip = (page - 1) * POSTS_PER_PAGE;
     const take = POSTS_PER_PAGE;
 
     const result = await this.postRepository.findAndCount({
-      where: { status: true },
+      where: { status: true, postTypeId },
       order: { Id: 'DESC' },
       skip,
       take,
