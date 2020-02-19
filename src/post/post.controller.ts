@@ -25,14 +25,14 @@ import { GetPostResponseDTO } from './dto/get-post-response.dto';
 import { PostLikeService } from '../post-like/post-like.service';
 import { ValidateIdPipe } from '../common/pipe/validate-id.pipe';
 import { OnlyMemberGuard } from '../common/guards/only-member.guard';
+import { ImagePostResponseDTO } from './dto/image-post-repsponse.dto';
+import { CreateImageBodyDTO } from '../image/dto/create-image-body.dto';
+import { UpdateImagePostBodyDTO } from './dto/update-image-post-body.dto';
 import { GetPostListResponseDTO } from './dto/get-post-list-response.dto';
+import { ImageListResponseDTO } from '../image/dto/image-list-response.dto';
 import { CreateCommentBodyDTO } from '../comment/dto/create-comment-body.dto';
 import { GetCommentResponseDTO } from '../comment/dto/get-comment-response.dto';
-import { ImagePostResponseDTO } from './dto/image-post-repsponse.dto';
 import { GetCommentListResponseDTO } from '../comment/dto/get-comment-list-response.dto';
-import { UpdateImagePostBodyDTO } from './dto/update-image-post-body.dto';
-import { CreateImageBodyDTO } from '../image/dto/create-image-body.dto';
-import { ImageListResponseDTO } from '../image/dto/image-list-response.dto';
 
 @Controller('post')
 export class PostController {
@@ -403,20 +403,19 @@ export class PostController {
 
     if (!newImagePost) {
       throw new NotFoundException(
-        `${imagePost.Id}번에 해당하는 갤러리가 존재하지 않습니다.`,
+        `${newImagePost.Id}번에 해당하는 갤러리가 존재하지 않습니다.`,
       );
     }
 
-    const firstImage = newImagePost.images[0];
-    if (!firstImage) {
-      throw new NotFoundException(`첫 번째 이미지가 존재하지 않습니다.`);
+    const imageList = await this.imageService.makeImageList(newImagePost.Id);
+    if (!imageList) {
+      throw new NotFoundException(`갤러리에 이미지가 존재하지 않습니다.`);
     }
-    console.log(firstImage);
+    const firstImage = imageList[0];
 
     await this.imageService.setRepresentative(firstImage.Id);
-    console.log(firstImage);
 
-    return new ImagePostResponseDTO(imagePost);
+    return new ImagePostResponseDTO(newImagePost);
   }
 
   @Delete('image/:postId/:imageId')
