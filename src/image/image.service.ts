@@ -67,7 +67,7 @@ export class ImageService {
 
   public async setRepresentative(Id: number) {
     // 대표이미지 설정하기
-    //올린 이미지 리스트 중 제일 앞에 위치한 것이 대표 이미지가 된다.
+    //올린 이미지 리스트 중 ID가 제일 작은 이미지가 대표 이미지가 된다.
     await this.imageRepository.update(Id, { isRepresentative: true });
 
     return { result: true };
