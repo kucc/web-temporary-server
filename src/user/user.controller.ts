@@ -22,6 +22,7 @@ import { UserUpdateRequestDTO } from './dto/user-update-request.dto';
 import { OnlyMemberGuard } from '../common/guards/only-member.guard';
 import { VerifyEmailRequestDTO } from './dto/verify-email-request.dto';
 import { GetPostListResponseDTO } from '../post/dto/get-post-list-response.dto';
+import { UserAvatarUpdateRequestDTO } from './dto/user-avatar-update-request.dto';
 
 @Controller('user')
 export class UserController {
@@ -87,6 +88,35 @@ export class UserController {
     }
 
     return new UserResponseDTO(user);
+  }
+
+  @Post('/:Id/avatar')
+  @UseGuards(OnlyMemberGuard)
+  async updateUserAvatar(
+    @Param('Id', ValidateIdPipe) Id: number,
+    @Body() userAvatarUpdateRequestDTO: UserAvatarUpdateRequestDTO,
+    @Req() request: Request,
+  ) {
+    const user = await this.userService.findUserById(Id);
+
+    if (!user) {
+      throw new NotFoundException(
+        `${Id}번 Id를 갖는 회원이 존재하지 않습니다.`,
+      );
+    }
+
+    if (request.user.Id !== user.Id) {
+      throw new BadRequestException(
+        `올바르지 않은 요청입니다. 혹시 당신은 해커? 건들지마라 우리 사이트..`,
+      );
+    }
+
+    const updatedUser = await this.userService.updateUser(
+      user,
+      userAvatarUpdateRequestDTO,
+    );
+
+    return new UserResponseDTO(updatedUser);
   }
 
   @Put('/:Id')

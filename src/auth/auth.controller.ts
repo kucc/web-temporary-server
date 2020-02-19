@@ -42,6 +42,8 @@ export class AuthController {
 
     const accessToken = await this.authService.createAccessToken(user);
     response.cookie('accessToken', accessToken);
+
+    // TODO : Access-Control-Allow-Origin 헤더에 설정하기
     response.setHeader('Access-Control-Allow-Credentials', 'true');
 
     response.json({
