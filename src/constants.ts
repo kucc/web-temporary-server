@@ -7,3 +7,10 @@ export enum ATTENDANCE_TYPE {
   ATTEND = 'attend',
   NOTICEDABSENT = 'noticedAbsent',
 }
+
+export enum POST_TYPE {
+  NOTICE = 1,
+  FREE = 2,
+  GALLERY = 3,
+  ALUMNI = 4,
+}
