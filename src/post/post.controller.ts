@@ -15,6 +15,7 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 
+import { POST_TYPE, POSTS_PER_PAGE } from '../constants';
 import { PostService } from './post.service';
 import { ImageEntity } from '../image/image.entity';
 import { ImageService } from '../image/image.service';
@@ -94,6 +95,16 @@ export class PostController {
     }
 
     const newPost = await this.postService.editPost(post, editPostBodyDTO);
+
+    if (post.postTypeId == 4) {
+      const imageList = await this.imageService.findImagesInPost(newPost.Id);
+
+      if (!imageList) {
+        throw new NotFoundException(`사진이 존재하지 않습니다.`);
+      }
+      const firstImage = imageList[0];
+      await this.imageService.setRepresentative(firstImage.Id);
+    }
     return new GetPostResponseDTO(newPost);
   }
 
@@ -117,7 +128,15 @@ export class PostController {
       throw new UnauthorizedException('유효하지 않은 접근입니다.');
     }
 
+    const imageList = await this.imageService.findImagesInPost(Id);
+
     try {
+      if (imageList) {
+        imageList.forEach(async image => {
+          await this.imageService.deleteImage(image.Id);
+        });
+      }
+
       await this.postService.deletePost(Id);
     } catch (e) {
       return { result: false };
@@ -250,50 +269,47 @@ export class PostController {
     return new GetPostListResponseDTO(posts, count);
   }
 
-  @Get('image/:postId')
-  async getImagePostById(
-    @Param('postId', ValidateIdPipe) postId: number,
-  ): Promise<ImagePostResponseDTO> {
-    const imagePost = await this.postService.findImagePostById(postId);
-
-    if (!imagePost) {
+  /////////////////////////////////////한 포스트의 이미지리스트///////////////////////////////////////////
+  @Get(':Id/images')
+  async getImagesInPost(
+    @Param('Id', ValidateIdPipe) Id: number,
+  ): Promise<ImageListResponseDTO> {
+    const post = await this.postService.findPostById(Id);
+    if (!post) {
       throw new NotFoundException(
-        `${postId}번에 해당하는 갤러리가 존재하지 않습니다.`,
+        `${Id}번에 해당하는 Post가 존재하지 않습니다.`,
       );
     }
 
-    await this.postService.incrementViews(postId);
-    const newPostWithImages = await this.postService.findImagePostById(postId);
-
-    return new ImagePostResponseDTO(newPostWithImages);
-  }
-
-  @Get('image')
-  async getImagePostsByPage(
-    @Query('page', ValidateIdPipe) page: number,
-  ): Promise<ImageListResponseDTO> {
-    const images = await this.imageService.getImagesByPage(page);
-
-    if (!images.length) {
-      throw new NotFoundException(`${page} 페이지가 존재하지 않습니다.`);
+    if (!post.status) {
+      throw new NotFoundException(`${Id}번에 해당하는 Post가 삭제되었습니다.`);
+    }
+    const imageList = await this.imageService.findImagesInPost(Id);
+    if (!imageList) {
+      throw new NotFoundException(`Post에 이미지가 존재하지 않습니다.`);
     }
 
-    return new ImageListResponseDTO(images);
+    return new ImageListResponseDTO(imageList);
   }
 
-  @Get('image/:postId/:imageId')
+  /////////////////////////////////특정 이미지 관련 api////////////////////////////////////
+  @Get(':postId/image/:imageId')
   async getImageById(
     @Param('postId', ValidateIdPipe) postId: number,
     @Param('imageId', ValidateIdPipe) imageId: number,
   ): Promise<ImageEntity> {
-    const postWithImages = await this.postService.findImagePostById(postId);
+    const postWithImages = await this.postService.findPostById(postId);
     if (!postWithImages) {
       throw new NotFoundException(
-        `${postId}번에 해당하는 갤러리가 존재하지 않습니다.`,
+        `${postId}번에 해당하는 Post가 존재하지 않습니다.`,
       );
     }
 
-    const image = await this.imageService.findImageById(postId, imageId);
+    if (!postWithImages.status) {
+      throw new NotFoundException(`삭제된 Post입니다.`);
+    }
+
+    const image = await this.imageService.findImageById(imageId);
     if (!image) {
       throw new NotFoundException(
         `${imageId}에 해당하는 이미지가 존재하지 않습니다.`,
@@ -303,35 +319,38 @@ export class PostController {
     return image;
   }
 
-  @Post('image')
+  @Post(':Id/image')
   @UseGuards(OnlyMemberGuard)
   async uploadImage(
-    @Param('postId', ValidateIdPipe) postId: number,
+    @Param('Id', ValidateIdPipe) Id: number,
     @Body() createImageBodyDTO: CreateImageBodyDTO,
   ): Promise<ImageEntity> {
-    const post = await this.postService.findImagePostById(postId);
+    const post = await this.postService.findPostById(Id);
 
     if (!post) {
       throw new NotFoundException(
-        `${postId}번에 해당하는 갤러리가 존재하지 않습니다.`,
+        `${Id}번에 해당하는 Post가 존재하지 않습니다.`,
       );
     }
-    const image = await this.imageService.uploadImage(
+    const image = await this.imageService.uploadImage(createImageBodyDTO, Id);
 
     if (!image) {
       throw new NotFoundException(`이미지 업로드에 실패했습니다.`);
     }
 
-    return image;
+    if (post.postTypeId == 4) {
+      const imageList = await this.imageService.findImagesInPost(Id);
+      if (imageList.length == 1) {
+        await this.imageService.setRepresentative(image.Id);
+      }
+    }
+
+    const newImage = this.imageService.findImageById(image.Id);
+
+    return newImage;
   }
-    }
 
-    const requestUserId = req.user.Id;
-
-    if (imagePost.userId !== requestUserId) {
-    }
-
-    const newImagePost = await this.postService.updateImagePost(
+  @Delete(':postId/image/:imageId')
   @UseGuards(OnlyMemberGuard)
   async deleteImage(
     @Param('postId', ValidateIdPipe) postId: number,
@@ -340,10 +359,10 @@ export class PostController {
   ) {
     const requestUserId = req.user.Id;
 
-    const postWithImages = await this.postService.findImagePostById(postId);
+    const postWithImages = await this.postService.findPostById(postId);
     if (!postWithImages) {
       throw new NotFoundException(
-        `${postWithImages.Id}번에 해당하는 갤러리가 존재하지 않습니다.`,
+        `${postWithImages.Id}번에 해당하는 Post가 존재하지 않습니다.`,
       );
     }
 
@@ -351,7 +370,7 @@ export class PostController {
       throw new UnauthorizedException(`유효하지 않은 접근입니다.`);
     }
 
-    const image = await this.imageService.findImageById(postId, imageId);
+    const image = await this.imageService.findImageById(imageId);
     if (!image) {
       throw new NotFoundException(
         `${imageId}번에 해당하는 이미지가 존재하지 않습니다.`,
