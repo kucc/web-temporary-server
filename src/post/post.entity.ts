@@ -6,6 +6,7 @@ import { CommentEntity } from '../comment/comment.entity';
 import { PostLikeEntity } from '../post-like/post-like.entity';
 import { PostTypeEntity } from '../common/entity/post-type.entity';
 import { ImageEntity } from '../image/image.entity';
+import { POST_TYPE } from '../constants';
 
 @Entity({
   name: 'Posts',
@@ -46,6 +47,14 @@ export class PostEntity extends Base {
     default: 0,
   })
   public views: number;
+
+  // @Column({
+  //   name: 'type',
+  //   type: 'varchar',
+  //   length: 100,
+  //   nullable: true,
+  // })
+  // public type: POST_TYPE;
 
   @ManyToOne(
     type => PostTypeEntity,
