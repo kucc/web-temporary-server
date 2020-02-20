@@ -121,43 +121,4 @@ export class PostService {
 
     return postsWithImages;
   }
-
-  public async findImagePostById(postId: number): Promise<PostEntity> {
-    const postWithImages = await this.postRepository.findOne({
-      relations: ['images'],
-      where: {
-        Id: postId,
-        status: true,
-        postTypeId: 4,
-      },
-    });
-
-    return postWithImages;
-  }
-
-  public async createImagePost(userId: number): Promise<PostEntity> {
-    const imagePost = this.postRepository.create({
-      userId,
-      postTypeId: 4,
-      title: '',
-    });
-
-    await this.postRepository.save(imagePost);
-
-    return imagePost;
-  }
-
-  public async updateImagePost(
-    imagePost: PostEntity,
-    updateImagePostBodyDTO: UpdateImagePostBodyDTO,
-  ): Promise<PostEntity> {
-    const newImagePost = this.postRepository.merge(
-      imagePost,
-      updateImagePostBodyDTO,
-    );
-
-    await this.postRepository.save(newImagePost);
-
-    return newImagePost;
-  }
 }
