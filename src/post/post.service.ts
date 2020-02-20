@@ -3,10 +3,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { PostEntity } from './post.entity';
-import { POSTS_PER_PAGE, IMAGES_PER_PAGE } from '../constants';
+import { POSTS_PER_PAGE } from '../constants';
 import { EditPostBodyDTO } from './dto/edit-post-body.dto';
 import { CreatePostBodyDTO } from './dto/create-post-body.dto';
-import { UpdateImagePostBodyDTO } from './dto/update-image-post-body.dto';
 
 @Injectable()
 export class PostService {
@@ -74,14 +73,36 @@ export class PostService {
     const skip = (page - 1) * POSTS_PER_PAGE;
     const take = POSTS_PER_PAGE;
 
-    const result = await this.postRepository.findAndCount({
-      where: { status: true, postTypeId },
-      order: { Id: 'DESC' },
-      skip,
-      take,
-    });
+    if (postTypeId !== 4) {
+      const result = await this.postRepository.findAndCount({
+        where: { status: true, postTypeId },
+        order: { Id: 'DESC' },
+        skip,
+        take,
+      });
+      return result;
+    } else {
+      const postsWithImages = await this.postRepository
+        .createQueryBuilder('post')
+        .innerJoinAndSelect('post.images', 'image', 'image.status= :status', {
+          status: true,
+        })
+        .where('post.status= :status', { status: true })
+        .andWhere('post.postTypeId= :postTypeId', { postTypeId: 4 })
+        .andWhere('image.isRepresentative= :isRepresentative', {
+          isRepresentative: true,
+        })
+        .skip(skip)
+        .take(take)
+        .orderBy({ 'post.createdAt': 'DESC' })
+        .getMany();
 
-    return result;
+      const count = await this.postRepository.count({
+        where: { status: true, postTypeId },
+      });
+
+      return [postsWithImages, count];
+    }
   }
 
   public async findPostsByUserId(
@@ -102,23 +123,5 @@ export class PostService {
     });
 
     return result;
-  }
-
-  public async findImagePostsByPage(page: number): Promise<PostEntity[]> {
-    const skip = (page - 1) * IMAGES_PER_PAGE;
-    const take = IMAGES_PER_PAGE;
-
-    const postsWithImages = await this.postRepository.find({
-      relations: ['images'],
-      where: {
-        status: true,
-        postTypeId: 4,
-      },
-      order: { createdAt: 'DESC' },
-      skip,
-      take,
-    });
-
-    return postsWithImages;
   }
 }

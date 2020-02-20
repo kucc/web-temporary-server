@@ -1,4 +1,5 @@
 import { PostEntity } from '../post.entity';
+import { ImageEntity } from '../../image/image.entity';
 
 export class GetPostListElementDTO {
   public constructor(post: PostEntity) {
@@ -9,6 +10,7 @@ export class GetPostListElementDTO {
     this.createdAt = post.createdAt;
     this.likes = post.likes;
     this.view = post.views;
+    this.image = post.images;
   }
   public readonly Id: number;
   public readonly title: string;
@@ -17,4 +19,5 @@ export class GetPostListElementDTO {
   public readonly createdAt: string;
   public readonly likes: number;
   public readonly view: number;
+  public readonly image?: ImageEntity[];
 }

@@ -234,9 +234,10 @@ export class PostController {
     return new GetCommentListResponseDTO(comments);
   }
 
+  /////////////////////////////////페이지로 불러오기///////////////////////////////////////////
   @Get('')
   async getPostsByPage(
-    @Query('postTypeId', ValidateIdPipe) postTypeId: number,
+    @Query('postTypeId', ValidateIdPipe) postTypeId: number = 1,
     @Query('page', ValidateIdPipe) page: number = 1,
   ): Promise<GetPostListResponseDTO> {
     const [posts, count] = await this.postService.findPostsByPage(
