@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { ImageEntity } from './image.entity';
-import { IMAGES_PER_PAGE } from '../constants';
 import { CreateImageBodyDTO } from './dto/create-image-body.dto';
 
 @Injectable()
@@ -13,28 +12,13 @@ export class ImageService {
     private readonly imageRepository: Repository<ImageEntity>,
   ) {}
 
-  public async findImageById(postId: number, Id: number): Promise<ImageEntity> {
+  public async findImageById(Id: number): Promise<ImageEntity> {
     return await this.imageRepository.findOne({
       where: {
         Id,
         status: true,
-        postId,
       },
     });
-  }
-
-  public async getImagesByPage(page: number): Promise<ImageEntity[]> {
-    const skip = (page - 1) * IMAGES_PER_PAGE;
-    const take = IMAGES_PER_PAGE;
-
-    const images = await this.imageRepository.find({
-      where: { status: true, isRepresentative: true },
-      order: { createdAt: 'DESC' },
-      skip,
-      take,
-    });
-
-    return images;
   }
 
   public async uploadImage(
@@ -54,10 +38,10 @@ export class ImageService {
     return { result: true };
   }
 
-  public async makeImageList(postId: number): Promise<ImageEntity[]> {
+  public async findImagesInPost(postId: number): Promise<ImageEntity[]> {
     const images = await this.imageRepository.find({
       where: {
-        postId: postId,
+        postId,
         status: true,
       },
       order: { Id: 'ASC' },

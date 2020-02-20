@@ -25,9 +25,7 @@ import { GetPostResponseDTO } from './dto/get-post-response.dto';
 import { PostLikeService } from '../post-like/post-like.service';
 import { ValidateIdPipe } from '../common/pipe/validate-id.pipe';
 import { OnlyMemberGuard } from '../common/guards/only-member.guard';
-import { ImagePostResponseDTO } from './dto/image-post-repsponse.dto';
 import { CreateImageBodyDTO } from '../image/dto/create-image-body.dto';
-import { UpdateImagePostBodyDTO } from './dto/update-image-post-body.dto';
 import { GetPostListResponseDTO } from './dto/get-post-list-response.dto';
 import { ImageListResponseDTO } from '../image/dto/image-list-response.dto';
 import { CreateCommentBodyDTO } from '../comment/dto/create-comment-body.dto';
@@ -307,59 +305,6 @@ export class PostController {
 
   @Post('image')
   @UseGuards(OnlyMemberGuard)
-  async createImagePost(@Req() req: Request): Promise<ImagePostResponseDTO> {
-    const userId = req.user.Id;
-
-    const imagePost = await this.postService.createImagePost(userId);
-
-    if (!imagePost) {
-      throw new NotFoundException(
-        `${imagePost.Id}번에 해당하는 갤러리가 존재하지 않습니다.`,
-      );
-    }
-
-    return new ImagePostResponseDTO(imagePost);
-  }
-
-  @Delete('image/:postId')
-  @UseGuards(OnlyMemberGuard)
-  async deleteImagePost(
-    @Param('postId', ValidateIdPipe) postId: number,
-    @Req() req: Request,
-  ) {
-    const requestUserId = req.user.Id;
-
-    const postWithImages = await this.postService.findImagePostById(postId);
-    if (!postWithImages) {
-      throw new NotFoundException(
-        `${postWithImages.Id}번에 해당하는 갤러리가 존재하지 않습니다.`,
-      );
-    }
-
-    if (postWithImages.userId !== requestUserId) {
-      throw new UnauthorizedException(`유효하지 않은 접근입니다.`);
-    }
-
-    const imageList = postWithImages.images;
-    if (!imageList) {
-      throw new NotFoundException(`이미지가 존재하지 않습니다.`);
-    }
-
-    try {
-      imageList.forEach(async image => {
-        await this.imageService.deleteImage(image.Id);
-      });
-
-      await this.postService.deletePost(postId);
-    } catch (e) {
-      return { result: false };
-    }
-
-    return { result: true };
-  }
-
-  @Post('image/:postId/upload')
-  @UseGuards(OnlyMemberGuard)
   async uploadImage(
     @Param('postId', ValidateIdPipe) postId: number,
     @Body() createImageBodyDTO: CreateImageBodyDTO,
@@ -372,9 +317,6 @@ export class PostController {
       );
     }
     const image = await this.imageService.uploadImage(
-      createImageBodyDTO,
-      postId,
-    );
 
     if (!image) {
       throw new NotFoundException(`이미지 업로드에 실패했습니다.`);
@@ -382,54 +324,14 @@ export class PostController {
 
     return image;
   }
-
-  @Put('image/:postId')
-  @UseGuards(OnlyMemberGuard)
-  async updateImagesToPost(
-    @Param('postId', ValidateIdPipe) postId: number,
-    @Body() updateImagePostBodyDTO: UpdateImagePostBodyDTO,
-    @Req() req: Request,
-  ): Promise<ImagePostResponseDTO> {
-    const imagePost = await this.postService.findImagePostById(postId);
-
-    if (!imagePost) {
-      throw new NotFoundException(
-        `${imagePost.Id}번에 해당하는 갤러리가 존재하지 않습니다.`,
-      );
     }
 
     const requestUserId = req.user.Id;
 
     if (imagePost.userId !== requestUserId) {
-      throw new UnauthorizedException(`유효하지 않은 접근입니다.`);
     }
 
     const newImagePost = await this.postService.updateImagePost(
-      imagePost,
-      updateImagePostBodyDTO,
-    );
-
-    if (!newImagePost) {
-      throw new NotFoundException(
-        `${newImagePost.Id}번에 해당하는 갤러리가 존재하지 않습니다.`,
-      );
-    }
-
-    const imageList = await this.imageService.makeImageList(newImagePost.Id);
-    if (!imageList) {
-      throw new NotFoundException(`갤러리에 이미지가 존재하지 않습니다.`);
-    }
-    const firstImage = imageList[0];
-    await this.imageService.setRepresentative(firstImage.Id);
-
-    const finalImagePost = await this.postService.findImagePostById(
-      newImagePost.Id,
-    );
-
-    return new ImagePostResponseDTO(finalImagePost);
-  }
-
-  @Delete('image/:postId/:imageId')
   @UseGuards(OnlyMemberGuard)
   async deleteImage(
     @Param('postId', ValidateIdPipe) postId: number,
