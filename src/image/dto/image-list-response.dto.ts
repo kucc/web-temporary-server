@@ -1,5 +1,5 @@
-import { ImageResponseDTO } from './image-response.dto';
 import { ImageEntity } from '../image.entity';
+import { ImageResponseDTO } from './image-response.dto';
 
 export class ImageListResponseDTO {
   public constructor(images: ImageEntity[]) {
