@@ -1,4 +1,5 @@
 import { IsNotEmpty, MaxLength, IsInt } from 'class-validator';
+import { POST_TYPE } from '../../constants';
 
 export class EditPostBodyDTO {
   @IsNotEmpty()
@@ -8,7 +9,6 @@ export class EditPostBodyDTO {
   @IsNotEmpty()
   public readonly content: string;
 
-  @IsInt()
   @IsNotEmpty()
-  public readonly postTypeId: number;
+  public readonly type: POST_TYPE;
 }
