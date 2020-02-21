@@ -95,16 +95,6 @@ export class PostController {
     }
 
     const newPost = await this.postService.editPost(post, editPostBodyDTO);
-
-    if (post.postTypeId == 4) {
-      const imageList = await this.imageService.findImagesInPost(newPost.Id);
-
-      if (!imageList) {
-        throw new NotFoundException(`사진이 존재하지 않습니다.`);
-      }
-      const firstImage = imageList[0];
-      await this.imageService.setRepresentative(firstImage.Id);
-    }
     return new GetPostResponseDTO(newPost);
   }
 
@@ -129,14 +119,17 @@ export class PostController {
     }
 
     const imageList = await this.imageService.findImagesInPost(Id);
-
-    try {
-      if (imageList) {
+    if (imageList.length > 0) {
+      try {
         imageList.forEach(async image => {
           await this.imageService.deleteImage(image.Id);
         });
+      } catch (e) {
+        return { result: false };
       }
+    }
 
+    try {
       await this.postService.deletePost(Id);
     } catch (e) {
       return { result: false };
@@ -347,6 +340,10 @@ export class PostController {
         `${Id}번에 해당하는 Post가 존재하지 않습니다.`,
       );
     }
+
+    if (!post.status) {
+      throw new NotFoundException(`${Id}번에 해당하는 Post가 삭제되었습니다.`);
+    }
     const image = await this.imageService.uploadImage(createImageBodyDTO, Id);
 
     if (!image) {
@@ -396,6 +393,14 @@ export class PostController {
       await this.imageService.deleteImage(imageId);
     } catch (e) {
       return { result: false };
+    }
+
+    if (postWithImages.postTypeId === 4) {
+      const imageList = await this.imageService.findImagesInPost(postId);
+      if (imageList.length > 0) {
+        const firstImage = imageList[0];
+        await this.imageService.setRepresentative(firstImage.Id);
+      }
     }
 
     return { result: true };

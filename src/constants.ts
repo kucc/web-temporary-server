@@ -1,4 +1,5 @@
 export const POSTS_PER_PAGE = 10;
+export const IMAGES_PER_PAGE = 12;
 
 export enum ATTENDANCE_TYPE {
   LATE = 'late',

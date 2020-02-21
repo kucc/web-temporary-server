@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { PostEntity } from './post.entity';
-import { POSTS_PER_PAGE } from '../constants';
+import { POSTS_PER_PAGE, IMAGES_PER_PAGE } from '../constants';
 import { EditPostBodyDTO } from './dto/edit-post-body.dto';
 import { CreatePostBodyDTO } from './dto/create-post-body.dto';
 
