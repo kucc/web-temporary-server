@@ -1,12 +1,11 @@
 import { Entity, Column, ManyToOne, JoinColumn, OneToMany } from 'typeorm';
 
+import { POST_TYPE } from '../constants';
 import { UserEntity } from '../user/user.entity';
 import { Base } from '../common/entity/base.entity';
+import { ImageEntity } from '../image/image.entity';
 import { CommentEntity } from '../comment/comment.entity';
 import { PostLikeEntity } from '../post-like/post-like.entity';
-import { PostTypeEntity } from '../common/entity/post-type.entity';
-import { ImageEntity } from '../image/image.entity';
-import { POST_TYPE } from '../constants';
 
 @Entity({
   name: 'Posts',
@@ -35,36 +34,19 @@ export class PostEntity extends Base {
   public likes: number;
 
   @Column({
-    name: 'postTypeId',
-    type: 'int',
-    nullable: false,
-  })
-  public postTypeId: number;
-
-  @Column({
     name: 'views',
     type: 'int',
     default: 0,
   })
   public views: number;
 
-  // @Column({
-  //   name: 'type',
-  //   type: 'varchar',
-  //   length: 100,
-  //   nullable: true,
-  // })
-  // public type: POST_TYPE;
-
-  @ManyToOne(
-    type => PostTypeEntity,
-    postType => postType.posts,
-  )
-  @JoinColumn({
-    name: 'postTypeId',
-    referencedColumnName: 'Id',
+  @Column({
+    name: 'type',
+    type: 'varchar',
+    length: 100,
+    nullable: true,
   })
-  public postType: PostTypeEntity;
+  public type: POST_TYPE;
 
   @Column({
     name: 'userId',
