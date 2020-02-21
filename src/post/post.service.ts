@@ -73,36 +73,42 @@ export class PostService {
     const skip = (page - 1) * POSTS_PER_PAGE;
     const take = POSTS_PER_PAGE;
 
-    if (postTypeId !== 4) {
-      const result = await this.postRepository.findAndCount({
-        where: { status: true, postTypeId },
-        order: { Id: 'DESC' },
-        skip,
-        take,
-      });
-      return result;
-    } else {
-      const postsWithImages = await this.postRepository
-        .createQueryBuilder('post')
-        .innerJoinAndSelect('post.images', 'image', 'image.status= :status', {
-          status: true,
-        })
-        .where('post.status= :status', { status: true })
-        .andWhere('post.postTypeId= :postTypeId', { postTypeId: 4 })
-        .andWhere('image.isRepresentative= :isRepresentative', {
-          isRepresentative: true,
-        })
-        .skip(skip)
-        .take(take)
-        .orderBy({ 'post.createdAt': 'DESC' })
-        .getMany();
+    const result = await this.postRepository.findAndCount({
+      where: { status: true, postTypeId },
+      order: { Id: 'DESC' },
+      skip,
+      take,
+    });
+    return result;
+  }
 
-      const count = await this.postRepository.count({
-        where: { status: true, postTypeId },
-      });
+  public async findPostsWtihImagesByPage(
+    page: number,
+    postTypeId: number,
+  ): Promise<[PostEntity[], number]> {
+    const skip = (page - 1) * IMAGES_PER_PAGE;
+    const take = IMAGES_PER_PAGE;
 
-      return [postsWithImages, count];
-    }
+    const postsWithImages = await this.postRepository
+      .createQueryBuilder('post')
+      .innerJoinAndSelect('post.images', 'image', 'image.status= :status', {
+        status: true,
+      })
+      .where('post.status= :status', { status: true })
+      .andWhere('post.postTypeId= :postTypeId', { postTypeId: 4 })
+      .andWhere('image.isRepresentative= :isRepresentative', {
+        isRepresentative: true,
+      })
+      .skip(skip)
+      .take(take)
+      .orderBy({ 'post.createdAt': 'DESC' })
+      .getMany();
+
+    const count = await this.postRepository.count({
+      where: { status: true, postTypeId },
+    });
+
+    return [postsWithImages, count];
   }
 
   public async findPostsByUserId(

@@ -257,16 +257,31 @@ export class PostController {
     @Query('postTypeId', ValidateIdPipe) postTypeId: number = 1,
     @Query('page', ValidateIdPipe) page: number = 1,
   ): Promise<GetPostListResponseDTO> {
-    const [posts, count] = await this.postService.findPostsByPage(
-      page,
-      postTypeId,
-    );
+    if (postTypeId !== 4) {
+      const [posts, count] = await this.postService.findPostsByPage(
+        page,
+        postTypeId,
+      );
 
-    if (!posts.length) {
-      throw new NotFoundException(`${page} 페이지가 존재하지 않습니다.`);
+      if (!posts.length) {
+        throw new NotFoundException(`${page} 페이지가 존재하지 않습니다.`);
+      }
+
+      return new GetPostListResponseDTO(posts, count);
     }
 
-    return new GetPostListResponseDTO(posts, count);
+    if (postTypeId === 4) {
+      const [posts, count] = await this.postService.findPostsWtihImagesByPage(
+        page,
+        postTypeId,
+      );
+
+      if (!posts.length) {
+        throw new NotFoundException(`${page} 페이지가 존재하지 않습니다.`);
+      }
+
+      return new GetPostListResponseDTO(posts, count);
+    }
   }
 
   /////////////////////////////////////한 포스트의 이미지리스트///////////////////////////////////////////
