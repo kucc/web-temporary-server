@@ -3,9 +3,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { PostEntity } from './post.entity';
-import { POSTS_PER_PAGE, IMAGES_PER_PAGE } from '../constants';
 import { EditPostBodyDTO } from './dto/edit-post-body.dto';
 import { CreatePostBodyDTO } from './dto/create-post-body.dto';
+import { POSTS_PER_PAGE, IMAGES_PER_PAGE, POST_TYPE } from '../constants';
 
 @Injectable()
 export class PostService {
@@ -68,13 +68,13 @@ export class PostService {
 
   public async findPostsByPage(
     page: number,
-    postTypeId: number,
+    type: POST_TYPE,
   ): Promise<[PostEntity[], number]> {
     const skip = (page - 1) * POSTS_PER_PAGE;
     const take = POSTS_PER_PAGE;
 
     const result = await this.postRepository.findAndCount({
-      where: { status: true, postTypeId },
+      where: { status: true, type },
       order: { Id: 'DESC' },
       skip,
       take,
@@ -84,7 +84,7 @@ export class PostService {
 
   public async findPostsWtihImagesByPage(
     page: number,
-    postTypeId: number,
+    type: POST_TYPE,
   ): Promise<[PostEntity[], number]> {
     const skip = (page - 1) * IMAGES_PER_PAGE;
     const take = IMAGES_PER_PAGE;
@@ -95,7 +95,7 @@ export class PostService {
         status: true,
       })
       .where('post.status= :status', { status: true })
-      .andWhere('post.postTypeId= :postTypeId', { postTypeId: 4 })
+      .andWhere('post.type= :type', { type: 'GALLERY' })
       .andWhere('image.isRepresentative= :isRepresentative', {
         isRepresentative: true,
       })
@@ -105,7 +105,7 @@ export class PostService {
       .getMany();
 
     const count = await this.postRepository.count({
-      where: { status: true, postTypeId },
+      where: { status: true, type },
     });
 
     return [postsWithImages, count];

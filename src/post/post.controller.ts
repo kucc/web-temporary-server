@@ -15,7 +15,7 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 
-import { POST_TYPE, POSTS_PER_PAGE } from '../constants';
+import { POST_TYPE } from '../constants';
 import { PostService } from './post.service';
 import { ImageEntity } from '../image/image.entity';
 import { ImageService } from '../image/image.service';
@@ -247,14 +247,11 @@ export class PostController {
   /////////////////////////////////페이지로 불러오기///////////////////////////////////////////
   @Get('')
   async getPostsByPage(
-    @Query('postTypeId', ValidateIdPipe) postTypeId: number = 1,
+    @Query('type') type: POST_TYPE,
     @Query('page', ValidateIdPipe) page: number = 1,
   ): Promise<GetPostListResponseDTO> {
-    if (postTypeId !== 4) {
-      const [posts, count] = await this.postService.findPostsByPage(
-        page,
-        postTypeId,
-      );
+    if (type !== 'GALLERY') {
+      const [posts, count] = await this.postService.findPostsByPage(page, type);
 
       if (!posts.length) {
         throw new NotFoundException(`${page} 페이지가 존재하지 않습니다.`);
@@ -263,10 +260,10 @@ export class PostController {
       return new GetPostListResponseDTO(posts, count);
     }
 
-    if (postTypeId === 4) {
+    if (type === 'GALLERY') {
       const [posts, count] = await this.postService.findPostsWtihImagesByPage(
         page,
-        postTypeId,
+        type,
       );
 
       if (!posts.length) {
@@ -350,7 +347,7 @@ export class PostController {
       throw new NotFoundException(`이미지 업로드에 실패했습니다.`);
     }
 
-    if (post.postTypeId == 4) {
+    if (post.type === 'GALLERY') {
       const imageList = await this.imageService.findImagesInPost(Id);
       if (imageList.length == 1) {
         await this.imageService.setRepresentative(image.Id);
@@ -395,7 +392,7 @@ export class PostController {
       return { result: false };
     }
 
-    if (postWithImages.postTypeId === 4) {
+    if (postWithImages.type === 'GALLERY') {
       const imageList = await this.imageService.findImagesInPost(postId);
       if (imageList.length > 0) {
         const firstImage = imageList[0];
