@@ -29,6 +29,7 @@ import { PostLikeService } from '../post-like/post-like.service';
 import { ValidateIdPipe } from '../common/pipe/validate-id.pipe';
 import { OnlyMemberGuard } from '../common/guards/only-member.guard';
 import { GetPostListResponseDTO } from './dto/get-post-list-response.dto';
+import { CreateImagesBodyDTO } from '../image/dto/create-images-body.dto';
 import { EditCommentBodyDTO } from '../comment/dto/edit-comment-body.dto';
 import { CommentLikeService } from '../comment-like/comment-like.service';
 import { CommentReplyService } from '../comment-reply/comment-reply.service';
@@ -36,7 +37,6 @@ import { ImageListResponseDTO } from '../image/dto/image-list-response.dto';
 import { CreateCommentBodyDTO } from '../comment/dto/create-comment-body.dto';
 import { GetCommentResponseDTO } from '../comment/dto/get-comment-response.dto';
 import { GetCommentListResponseDTO } from '../comment/dto/get-comment-list-response.dto';
-import { CreateImagesBodyDTO } from '../image/dto/create-images-body.dto';
 
 @Controller('post')
 export class PostController {
