@@ -28,7 +28,6 @@ import { GetPostResponseDTO } from './dto/get-post-response.dto';
 import { PostLikeService } from '../post-like/post-like.service';
 import { ValidateIdPipe } from '../common/pipe/validate-id.pipe';
 import { OnlyMemberGuard } from '../common/guards/only-member.guard';
-import { CreateImageBodyDTO } from '../image/dto/create-image-body.dto';
 import { GetPostListResponseDTO } from './dto/get-post-list-response.dto';
 import { EditCommentBodyDTO } from '../comment/dto/edit-comment-body.dto';
 import { CommentLikeService } from '../comment-like/comment-like.service';
