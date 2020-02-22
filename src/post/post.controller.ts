@@ -12,6 +12,8 @@ import {
   NotAcceptableException,
   Put,
   UnauthorizedException,
+  BadRequestException,
+  ImATeapotException,
 } from '@nestjs/common';
 import { Request } from 'express';
 
@@ -32,6 +34,7 @@ import { ImageListResponseDTO } from '../image/dto/image-list-response.dto';
 import { CreateCommentBodyDTO } from '../comment/dto/create-comment-body.dto';
 import { GetCommentResponseDTO } from '../comment/dto/get-comment-response.dto';
 import { GetCommentListResponseDTO } from '../comment/dto/get-comment-list-response.dto';
+import { CreateImagesBodyDTO } from '../image/dto/create-images-body.dto';
 
 @Controller('post')
 export class PostController {
@@ -327,9 +330,9 @@ export class PostController {
   @UseGuards(OnlyMemberGuard)
   async uploadImages(
     @Param('Id', ValidateIdPipe) Id: number,
-    @Body() createImageBodyDTO: CreateImageBodyDTO,
+    @Body() createImagesBodyDTO: CreateImagesBodyDTO,
     @Req() req: Request,
-  ): Promise<ImageEntity> {
+  ): Promise<ImageEntity[]> {
     const post = await this.postService.findPostById(Id);
 
     if (!post) {
@@ -347,22 +350,27 @@ export class PostController {
     if (!post.status) {
       throw new NotFoundException(`${Id}번에 해당하는 Post가 삭제되었습니다.`);
     }
-    const image = await this.imageService.uploadImage(createImageBodyDTO, Id);
 
-    if (!image) {
-      throw new NotFoundException(`이미지 업로드에 실패했습니다.`);
+    if (!createImagesBodyDTO.images.length) {
+      throw new ImATeapotException(`사진 안받았는데?`);
+    }
+    const images = await this.imageService.uploadImages(
+      createImagesBodyDTO.images,
+      Id,
+    );
+
+    if (!images) {
+      throw new NotFoundException(`이미지 로딩에 실패했습니다.`);
     }
 
     if (post.type === POST_TYPE.GALLERY) {
-      const imageList = await this.imageService.findImagesInPost(Id);
-      if (imageList.length == 1) {
-        await this.imageService.setRepresentative(image.Id);
-      }
+      const firstImage = images[0];
+      await this.imageService.setRepresentative(firstImage.Id);
     }
 
-    const newImage = this.imageService.findImageById(image.Id);
+    const newImages = this.imageService.findImagesInPost(Id);
 
-    return newImage;
+    return newImages;
   }
 
   @Delete(':postId/image/:imageId')
