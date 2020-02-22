@@ -1,5 +1,4 @@
 import { PostEntity } from '../post.entity';
-import { POST_TYPE } from '../../constants';
 
 export class GetPostResponseDTO {
   public constructor(post: PostEntity) {
