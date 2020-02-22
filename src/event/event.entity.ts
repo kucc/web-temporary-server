@@ -58,10 +58,10 @@ export class EventEntity extends Base {
   public user: UserEntity;
 
   @Column({
-    name: 'eventType',
+    name: 'color',
     type: 'varchar',
     length: 100,
     nullable: true,
   })
-  public eventType: string;
+  public color: string;
 }
