@@ -12,7 +12,6 @@ import {
   NotAcceptableException,
   Put,
   UnauthorizedException,
-  BadRequestException,
   ImATeapotException,
 } from '@nestjs/common';
 import { Request } from 'express';
