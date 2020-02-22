@@ -599,4 +599,27 @@ export class PostController {
 
     return new GetCommentResponseDTO(reply);
   }
+
+  @Get(':postId/comment/:commentId/reply')
+  @UseGuards(OnlyMemberGuard)
+  async loadAllReplies(
+    @Param('postId', ValidateIdPipe) postId: number,
+    @Param('commentId', ValidateIdPipe) commentId: number,
+  ): Promise<GetCommentListResponseDTO> {
+    const comment = await this.commentService.findCommentById(commentId);
+
+    if (!comment) {
+      throw new NotFoundException(
+        `${commentId}번 Comment가 존재하지 않습니다.`,
+      );
+    }
+
+    if (comment.postId != postId) {
+      throw new BadRequestException('잘못된 요청입니다.');
+    }
+
+    const replies = await this.commentService.findRepliesByCommentId(commentId);
+
+    return new GetCommentListResponseDTO(replies);
+  }
 }

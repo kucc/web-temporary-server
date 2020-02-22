@@ -65,6 +65,21 @@ export class CommentService {
     return comments;
   }
 
+  public async findRepliesByCommentId(Id: number): Promise<CommentEntity[]> {
+    const replies = await this.commentRepository
+      .createQueryBuilder('comment')
+      .innerJoin(
+        'comment.children',
+        'children',
+        'children.parentId= :parentId',
+        { parentId: Id },
+      )
+      .orderBy({ 'comment.Id': 'ASC' })
+      .getMany();
+
+    return replies;
+  }
+
   public async incrementLikes(Id: number) {
     await this.commentRepository.increment({ Id }, 'likes', 1);
 
