@@ -51,7 +51,7 @@ export class ProjectEntity extends Base {
 
   @OneToMany(
     type => UserProjectEntity,
-    userProject => userProject.projectId,
+    userProject => userProject.project,
   )
   public userProjects: UserProjectEntity[];
 }

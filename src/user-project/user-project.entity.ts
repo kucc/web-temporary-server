@@ -88,7 +88,7 @@ export class UserProjectEntity extends Base {
 
   @OneToMany(
     type => AttendanceEntity,
-    AttendanceEntity => AttendanceEntity.userProjectId,
+    AttendanceEntity => AttendanceEntity.userProject,
   )
   public attendances: AttendanceEntity[];
 }

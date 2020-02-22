@@ -67,19 +67,19 @@ export class CommentEntity extends Base {
 
   @OneToMany(
     type => CommentReplyEntity,
-    commentReply => commentReply.parentId,
+    commentReply => commentReply.parent,
   )
   public parent: CommentReplyEntity[];
 
   @OneToMany(
     type => CommentReplyEntity,
-    comment => comment.childId,
+    comment => comment.child,
   )
   public children: CommentReplyEntity[];
 
   @OneToMany(
     type => CommentLikeEntity,
-    commentLike => commentLike.commentId,
+    commentLike => commentLike.comment,
   )
   public likedUsers: CommentLikeEntity[];
 }
