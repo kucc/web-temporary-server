@@ -323,11 +323,12 @@ export class PostController {
     return image;
   }
 
-  @Post(':Id/image')
+  @Post(':Id/images')
   @UseGuards(OnlyMemberGuard)
-  async uploadImage(
+  async uploadImages(
     @Param('Id', ValidateIdPipe) Id: number,
     @Body() createImageBodyDTO: CreateImageBodyDTO,
+    @Req() req: Request,
   ): Promise<ImageEntity> {
     const post = await this.postService.findPostById(Id);
 
@@ -335,6 +336,12 @@ export class PostController {
       throw new NotFoundException(
         `${Id}번에 해당하는 Post가 존재하지 않습니다.`,
       );
+    }
+
+    const requestUserId = req.user.Id;
+
+    if (post.userId !== requestUserId) {
+      throw new UnauthorizedException(`유효하지 않은 접근입니다.`);
     }
 
     if (!post.status) {
@@ -346,7 +353,7 @@ export class PostController {
       throw new NotFoundException(`이미지 업로드에 실패했습니다.`);
     }
 
-    if (post.type === 'GALLERY') {
+    if (post.type === POST_TYPE.GALLERY) {
       const imageList = await this.imageService.findImagesInPost(Id);
       if (imageList.length == 1) {
         await this.imageService.setRepresentative(image.Id);
@@ -391,7 +398,7 @@ export class PostController {
       return { result: false };
     }
 
-    if (postWithImages.type === 'GALLERY') {
+    if (postWithImages.type === POST_TYPE.GALLERY) {
       const imageList = await this.imageService.findImagesInPost(postId);
       if (imageList.length > 0) {
         const firstImage = imageList[0];
