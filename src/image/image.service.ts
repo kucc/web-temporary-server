@@ -21,15 +21,21 @@ export class ImageService {
     });
   }
 
-  public async uploadImage(
-    createImageBodyDTO: CreateImageBodyDTO,
+  public async uploadImages(
+    createImagesBodyDTO: CreateImageBodyDTO[],
     postId: number,
-  ): Promise<ImageEntity> {
-    createImageBodyDTO.postId = postId;
-    const image = this.imageRepository.create(createImageBodyDTO);
-    await this.imageRepository.save(image);
+  ): Promise<ImageEntity[]> {
+    console.log(createImagesBodyDTO);
+    const images = this.imageRepository
+      .create(createImagesBodyDTO)
+      .map(imageEntity => {
+        imageEntity.postId = postId;
+        return imageEntity;
+      });
 
-    return image;
+    await this.imageRepository.save(images);
+
+    return images;
   }
 
   public async deleteImage(Id: number) {
