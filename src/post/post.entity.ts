@@ -55,6 +55,14 @@ export class PostEntity extends Base {
   })
   public userId: number;
 
+  @Column({
+    name: 'commentsCount',
+    type: 'int',
+    nullable: false,
+    default: 0,
+  })
+  public commentsCount: number;
+
   @ManyToOne(
     type => UserEntity,
     user => user.posts,
