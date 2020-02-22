@@ -25,7 +25,6 @@ export class ImageService {
     createImagesBodyDTO: CreateImageBodyDTO[],
     postId: number,
   ): Promise<ImageEntity[]> {
-    console.log(createImagesBodyDTO);
     const images = this.imageRepository
       .create(createImagesBodyDTO)
       .map(imageEntity => {
