@@ -78,43 +78,43 @@ export class UserEntity extends Base {
 
   @OneToMany(
     type => CommentLikeEntity,
-    commentLike => commentLike.userId,
+    commentLike => commentLike.user,
   )
   public likedComments: CommentLikeEntity[];
 
   @OneToMany(
     type => PostLikeEntity,
-    postLike => postLike.userId,
+    postLike => postLike.user,
   )
   public likedPosts: PostLikeEntity[];
 
   @OneToMany(
     type => ProjectEntity,
-    project => project.userId,
+    project => project.user,
   )
   public projects: ProjectEntity[];
 
   @OneToMany(
     type => UserProjectEntity,
-    userProject => userProject.userId,
+    userProject => userProject.user,
   )
   public userProjects: UserProjectEntity[];
 
   @OneToMany(
     type => EventEntity,
-    eventEntity => eventEntity.userId,
+    eventEntity => eventEntity.user,
   )
   public events: EventEntity[];
 
   @OneToMany(
     type => CommentEntity,
-    comment => comment.userId,
+    comment => comment.user,
   )
   public comments: CommentEntity[];
 
   @OneToMany(
     type => PostEntity,
-    post => post.userId,
+    post => post.user,
   )
   public posts: PostEntity[];
 }

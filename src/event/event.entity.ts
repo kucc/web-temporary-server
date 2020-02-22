@@ -1,6 +1,5 @@
-import { Entity, Column, OneToMany, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { Base } from '../common/entity/base.entity';
-import { EventTypeEntity } from '../common/entity/event-type.entity';
 import { UserEntity } from '../user/user.entity';
 
 @Entity({
@@ -59,16 +58,10 @@ export class EventEntity extends Base {
   public user: UserEntity;
 
   @Column({
-    name: 'eventTypeId',
-    type: 'int',
+    name: 'eventType',
+    type: 'varchar',
+    length: 100,
     nullable: true,
   })
-  public eventTypeId: number;
-
-  @ManyToOne(
-    type => EventTypeEntity,
-    eventType => eventType.events,
-  )
-  @JoinColumn({ name: 'eventTypeId', referencedColumnName: 'Id' })
-  public eventType: EventTypeEntity;
+  public eventType: string;
 }

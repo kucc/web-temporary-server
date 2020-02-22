@@ -75,13 +75,13 @@ export class PostEntity extends Base {
 
   @OneToMany(
     type => PostLikeEntity,
-    postLike => postLike.postId,
+    postLike => postLike.post,
   )
   public likedUsers: PostLikeEntity[];
 
   @OneToMany(
     type => CommentEntity,
-    comment => comment.postId,
+    comment => comment.post,
   )
   public comments: CommentEntity[];
 
