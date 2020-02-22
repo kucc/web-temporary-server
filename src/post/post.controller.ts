@@ -12,6 +12,8 @@ import {
   NotAcceptableException,
   Put,
   UnauthorizedException,
+  BadRequestException,
+  ImATeapotException,
 } from '@nestjs/common';
 import { Request } from 'express';
 
@@ -348,13 +350,17 @@ export class PostController {
     if (!post.status) {
       throw new NotFoundException(`${Id}번에 해당하는 Post가 삭제되었습니다.`);
     }
+
+    if (!createImagesBodyDTO.images.length) {
+      throw new ImATeapotException(`사진 안받았는데?`);
+    }
     const images = await this.imageService.uploadImages(
       createImagesBodyDTO.images,
       Id,
     );
 
     if (!images) {
-      throw new NotFoundException(`이미지 업로드에 실패했습니다.`);
+      throw new NotFoundException(`이미지 로딩에 실패했습니다.`);
     }
 
     if (post.type === POST_TYPE.GALLERY) {
