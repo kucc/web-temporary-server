@@ -66,6 +66,4 @@ export class AttendanceService {
     await this.attendanceRepository.save(newAttendance);
     return newAttendance;
   }
-
-  public async updateTotalLate(Id: number) {}
 }

@@ -9,6 +9,7 @@ import { ProjectModule } from './project/project.module';
 import { DeserializeUserMiddleWare } from './common/middleware/deserialize-user.middleware';
 import { PostModule } from './post/post.module';
 import { CommentModule } from './comment/comment.module';
+import { LoggingModule } from './logging/logging.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { CommentModule } from './comment/comment.module';
     ProjectModule,
     PostModule,
     CommentModule,
+    LoggingModule,
   ],
   controllers: [AppController],
   providers: [AppService],
