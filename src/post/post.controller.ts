@@ -13,6 +13,7 @@ import {
   Put,
   UnauthorizedException,
   ImATeapotException,
+  BadRequestException,
 } from '@nestjs/common';
 import { Request } from 'express';
 
@@ -442,6 +443,10 @@ export class PostController {
       throw new NotAcceptableException('삭제된 Comment입니다.');
     }
 
+    if (comment.postId != postId) {
+      throw new BadRequestException('잘못된 요청입니다.');
+    }
+
     if (comment.userId !== request.user.Id) {
       throw new UnauthorizedException('유효하지 않은 접근입니다.');
     }
@@ -471,6 +476,10 @@ export class PostController {
 
     if (!comment.status) {
       throw new NotAcceptableException('삭제된 Comment입니다.');
+    }
+
+    if (comment.postId != postId) {
+      throw new BadRequestException('잘못된 요청입니다.');
     }
 
     if (comment.userId !== request.user.Id) {
@@ -568,6 +577,10 @@ export class PostController {
 
     if (!comment.status) {
       throw new NotAcceptableException('삭제된 Comment입니다.');
+    }
+
+    if (comment.postId != postId) {
+      throw new BadRequestException('잘못된 요청입니다.');
     }
 
     const userId = request.user.Id;
