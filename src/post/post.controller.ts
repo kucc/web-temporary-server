@@ -417,6 +417,8 @@ export class PostController {
       isReply,
     );
 
+    await this.postService.incrementCommentsCount(Id);
+
     return new GetCommentResponseDTO(comment);
   }
 
@@ -480,6 +482,8 @@ export class PostController {
     } catch (e) {
       return { result: false };
     }
+
+    await this.postService.decrementCommentsCount(postId);
 
     return { result: true };
   }
@@ -577,6 +581,8 @@ export class PostController {
     );
 
     this.commentReplyService.addParentChildRelation(commentId, reply.Id);
+
+    await this.postService.incrementCommentsCount(postId);
 
     return new GetCommentResponseDTO(reply);
   }

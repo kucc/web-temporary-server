@@ -66,6 +66,18 @@ export class PostService {
     return { return: true };
   }
 
+  public async incrementCommentsCount(Id: number) {
+    await this.postRepository.increment({ Id }, 'commentsCount', 1);
+
+    return { return: true };
+  }
+
+  public async decrementCommentsCount(Id: number) {
+    await this.postRepository.decrement({ Id }, 'commentsCount', 1);
+
+    return { return: true };
+  }
+
   public async findPostsByPage(
     page: number,
     type: POST_TYPE,
