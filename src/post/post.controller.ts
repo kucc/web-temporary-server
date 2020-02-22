@@ -250,17 +250,7 @@ export class PostController {
     @Query('type') type: POST_TYPE,
     @Query('page', ValidateIdPipe) page: number = 1,
   ): Promise<GetPostListResponseDTO> {
-    if (type !== 'GALLERY') {
-      const [posts, count] = await this.postService.findPostsByPage(page, type);
-
-      if (!posts.length) {
-        throw new NotFoundException(`${page} 페이지가 존재하지 않습니다.`);
-      }
-
-      return new GetPostListResponseDTO(posts, count);
-    }
-
-    if (type === 'GALLERY') {
+    if (type === POST_TYPE.GALLERY) {
       const [posts, count] = await this.postService.findPostsWtihImagesByPage(
         page,
         type,
@@ -272,10 +262,18 @@ export class PostController {
 
       return new GetPostListResponseDTO(posts, count);
     }
+    const [posts, count] = await this.postService.findPostsByPage(page, type);
+
+    if (!posts.length) {
+      throw new NotFoundException(`${page} 페이지가 존재하지 않습니다.`);
+    }
+
+    return new GetPostListResponseDTO(posts, count);
   }
 
   /////////////////////////////////////한 포스트의 이미지리스트///////////////////////////////////////////
   @Get(':Id/images')
+  @UseGuards(OnlyMemberGuard)
   async getImagesInPost(
     @Param('Id', ValidateIdPipe) Id: number,
   ): Promise<ImageListResponseDTO> {
@@ -300,6 +298,7 @@ export class PostController {
   /////////////////////////////////특정 이미지 관련 api////////////////////////////////////
   @Get(':postId/image/:imageId')
   async getImageById(
+    //삭제
     @Param('postId', ValidateIdPipe) postId: number,
     @Param('imageId', ValidateIdPipe) imageId: number,
   ): Promise<ImageEntity> {

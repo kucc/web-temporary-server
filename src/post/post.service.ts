@@ -95,7 +95,7 @@ export class PostService {
         status: true,
       })
       .where('post.status= :status', { status: true })
-      .andWhere('post.type= :type', { type: 'GALLERY' })
+      .andWhere('post.type= :type', { type: POST_TYPE.GALLERY })
       .andWhere('image.isRepresentative= :isRepresentative', {
         isRepresentative: true,
       })
