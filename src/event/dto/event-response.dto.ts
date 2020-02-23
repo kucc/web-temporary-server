@@ -6,7 +6,7 @@ export class EventResponseDTO {
     this.name = event.name;
     this.userId = event.userId;
     this.description = event.description;
-    this.createdAt = event.createdAt;
+    this.startAt = event.startAt;
     this.endAt = event.endAt;
     this.color = event.color;
     this.place = event.place;
@@ -15,7 +15,7 @@ export class EventResponseDTO {
   public readonly name: string;
   public readonly userId: number;
   public readonly description: string;
-  public readonly createdAt: string;
+  public readonly startAt: string;
   public readonly endAt: string;
   public readonly color: string;
   public readonly place: string;
