@@ -12,8 +12,8 @@ import {
   NotAcceptableException,
   Put,
   UnauthorizedException,
-  BadRequestException,
   ImATeapotException,
+  BadRequestException,
 } from '@nestjs/common';
 import { Request } from 'express';
 
@@ -28,13 +28,15 @@ import { GetPostResponseDTO } from './dto/get-post-response.dto';
 import { PostLikeService } from '../post-like/post-like.service';
 import { ValidateIdPipe } from '../common/pipe/validate-id.pipe';
 import { OnlyMemberGuard } from '../common/guards/only-member.guard';
-import { CreateImageBodyDTO } from '../image/dto/create-image-body.dto';
 import { GetPostListResponseDTO } from './dto/get-post-list-response.dto';
+import { CreateImagesBodyDTO } from '../image/dto/create-images-body.dto';
+import { EditCommentBodyDTO } from '../comment/dto/edit-comment-body.dto';
+import { CommentLikeService } from '../comment-like/comment-like.service';
 import { ImageListResponseDTO } from '../image/dto/image-list-response.dto';
+import { CommentReplyService } from '../comment-reply/comment-reply.service';
 import { CreateCommentBodyDTO } from '../comment/dto/create-comment-body.dto';
 import { GetCommentResponseDTO } from '../comment/dto/get-comment-response.dto';
 import { GetCommentListResponseDTO } from '../comment/dto/get-comment-list-response.dto';
-import { CreateImagesBodyDTO } from '../image/dto/create-images-body.dto';
 
 @Controller('post')
 export class PostController {
@@ -42,6 +44,8 @@ export class PostController {
     private readonly postService: PostService,
     private readonly postLikeService: PostLikeService,
     private readonly commentService: CommentService,
+    private readonly commentLikeService: CommentLikeService,
+    private readonly commentReplyService: CommentReplyService,
     private readonly imageService: ImageService,
   ) {}
 
@@ -143,7 +147,7 @@ export class PostController {
 
   @Get(':Id/like')
   @UseGuards(OnlyMemberGuard)
-  async getLikeOfUser(
+  async getPostLikeOfUser(
     @Param('Id', ValidateIdPipe) Id: number,
     @Req() request: Request,
   ): Promise<boolean> {
@@ -167,7 +171,7 @@ export class PostController {
 
   @Post(':Id/like')
   @UseGuards(OnlyMemberGuard)
-  async updateLikes(
+  async updatePostLikes(
     @Param('Id', ValidateIdPipe) Id: number,
     @Req() request: Request,
   ) {
@@ -195,36 +199,6 @@ export class PostController {
     }
 
     return { return: true };
-  }
-
-  @Post(':Id/comment')
-  @UseGuards(OnlyMemberGuard)
-  async createComment(
-    @Param('Id', ValidateIdPipe) Id: number,
-    @Body() createCommentBodyDTO: CreateCommentBodyDTO,
-    @Req() request: Request,
-  ): Promise<GetCommentResponseDTO> {
-    const post = await this.postService.findPostById(Id);
-
-    if (!post) {
-      throw new NotFoundException(`${Id}번 Post가 존재하지 않습니다.`);
-    }
-
-    if (!post.status) {
-      throw new NotAcceptableException('삭제된 Post입니다.');
-    }
-
-    const userId = request.user.Id;
-    const isReply = false;
-
-    const comment = await this.commentService.createComment(
-      Id,
-      userId,
-      createCommentBodyDTO,
-      isReply,
-    );
-
-    return new GetCommentResponseDTO(comment);
   }
 
   @Get(':Id/comment')
@@ -415,5 +389,237 @@ export class PostController {
     }
 
     return { result: true };
+  }
+
+  @Post(':Id/comment')
+  @UseGuards(OnlyMemberGuard)
+  async createComment(
+    @Param('Id', ValidateIdPipe) Id: number,
+    @Body() createCommentBodyDTO: CreateCommentBodyDTO,
+    @Req() request: Request,
+  ): Promise<GetCommentResponseDTO> {
+    const post = await this.postService.findPostById(Id);
+
+    if (!post) {
+      throw new NotFoundException(`${Id}번 Post가 존재하지 않습니다.`);
+    }
+
+    if (!post.status) {
+      throw new NotAcceptableException('삭제된 Post입니다.');
+    }
+
+    const userId = request.user.Id;
+    const isReply = false;
+
+    const comment = await this.commentService.createComment(
+      Id,
+      userId,
+      createCommentBodyDTO,
+      isReply,
+    );
+
+    await this.postService.incrementCommentsCount(Id);
+
+    return new GetCommentResponseDTO(comment);
+  }
+
+  @Put(':postId/comment/:commentId')
+  @UseGuards(OnlyMemberGuard)
+  async editComment(
+    @Param('postId', ValidateIdPipe) postId: number,
+    @Param('commentId', ValidateIdPipe) commentId: number,
+    @Body() editCommentBodyDTO: EditCommentBodyDTO,
+    @Req() request: Request,
+  ): Promise<GetCommentResponseDTO> {
+    const comment = await this.commentService.findCommentById(commentId);
+
+    if (!comment) {
+      throw new NotFoundException(
+        `${commentId}번 Comment가 존재하지 않습니다.`,
+      );
+    }
+
+    if (!comment.status) {
+      throw new NotAcceptableException('삭제된 Comment입니다.');
+    }
+
+    if (comment.postId != postId) {
+      throw new BadRequestException('잘못된 요청입니다.');
+    }
+
+    if (comment.userId !== request.user.Id) {
+      throw new UnauthorizedException('유효하지 않은 접근입니다.');
+    }
+
+    const newComment = await this.commentService.editComment(
+      comment,
+      editCommentBodyDTO,
+    );
+
+    return new GetCommentResponseDTO(newComment);
+  }
+
+  @Delete(':postId/comment/:commentId')
+  @UseGuards(OnlyMemberGuard)
+  async deleteComment(
+    @Param('postId', ValidateIdPipe) postId: number,
+    @Param('commentId', ValidateIdPipe) commentId: number,
+    @Req() request: Request,
+  ) {
+    const comment = await this.commentService.findCommentById(commentId);
+
+    if (!comment) {
+      throw new NotFoundException(
+        `${commentId}번 Comment가 존재하지 않습니다.`,
+      );
+    }
+
+    if (!comment.status) {
+      throw new NotAcceptableException('삭제된 Comment입니다.');
+    }
+
+    if (comment.postId != postId) {
+      throw new BadRequestException('잘못된 요청입니다.');
+    }
+
+    if (comment.userId !== request.user.Id) {
+      throw new UnauthorizedException('유효하지 않은 접근입니다.');
+    }
+
+    try {
+      this.commentService.deleteComment(commentId);
+    } catch (e) {
+      return { result: false };
+    }
+
+    await this.postService.decrementCommentsCount(postId);
+
+    return { result: true };
+  }
+
+  @Get(':postId/comment/:commentId/like')
+  @UseGuards(OnlyMemberGuard)
+  async getCommentLikeOfUser(
+    @Param('postId', ValidateIdPipe) postId: number,
+    @Param('commentId', ValidateIdPipe) commentId: number,
+    @Req() request: Request,
+  ): Promise<boolean> {
+    const comment = await this.commentService.findCommentById(commentId);
+
+    if (!comment) {
+      throw new NotFoundException(
+        `${commentId}번 Comment가 존재하지 않습니다.`,
+      );
+    }
+
+    if (!comment.status) {
+      throw new NotAcceptableException('삭제된 Comment입니다.');
+    }
+
+    const isLiked = await this.commentLikeService.checkUserLikedComment(
+      comment.Id,
+      request.user.Id,
+    );
+
+    return isLiked;
+  }
+
+  @Post(':postId/comment/:commentId/like')
+  @UseGuards(OnlyMemberGuard)
+  async updateCommentLikes(
+    @Param('postId', ValidateIdPipe) postId: number,
+    @Param('commentId', ValidateIdPipe) commentId: number,
+    @Req() request: Request,
+  ) {
+    const comment = await this.commentService.findCommentById(commentId);
+
+    if (!comment) {
+      throw new NotFoundException(
+        `${commentId}번 Comment가 존재하지 않습니다.`,
+      );
+    }
+
+    if (!comment.status) {
+      throw new NotAcceptableException('삭제된 Comment입니다.');
+    }
+
+    const toggleResult = await this.commentLikeService.toggleLikes(
+      comment.Id,
+      request.user.Id,
+    );
+
+    try {
+      toggleResult
+        ? this.commentService.incrementLikes(commentId)
+        : this.commentService.decrementLikes(commentId);
+    } catch (e) {
+      return { return: false };
+    }
+
+    return { return: true };
+  }
+
+  @Post(':postId/comment/:commentId/reply')
+  @UseGuards(OnlyMemberGuard)
+  async createReply(
+    @Param('postId', ValidateIdPipe) postId: number,
+    @Param('commentId', ValidateIdPipe) commentId: number,
+    @Body() createCommentBodyDTO: CreateCommentBodyDTO,
+    @Req() request: Request,
+  ): Promise<GetCommentResponseDTO> {
+    const comment = await this.commentService.findCommentById(commentId);
+
+    if (!comment) {
+      throw new NotFoundException(
+        `${commentId}번 Comment가 존재하지 않습니다.`,
+      );
+    }
+
+    if (!comment.status) {
+      throw new NotAcceptableException('삭제된 Comment입니다.');
+    }
+
+    if (comment.postId != postId) {
+      throw new BadRequestException('잘못된 요청입니다.');
+    }
+
+    const userId = request.user.Id;
+    const isReply = true;
+
+    const reply = await this.commentService.createComment(
+      postId,
+      userId,
+      createCommentBodyDTO,
+      isReply,
+    );
+
+    this.commentReplyService.addParentChildRelation(commentId, reply.Id);
+
+    await this.postService.incrementCommentsCount(postId);
+
+    return new GetCommentResponseDTO(reply);
+  }
+
+  @Get(':postId/comment/:commentId/reply')
+  @UseGuards(OnlyMemberGuard)
+  async loadAllReplies(
+    @Param('postId', ValidateIdPipe) postId: number,
+    @Param('commentId', ValidateIdPipe) commentId: number,
+  ): Promise<GetCommentListResponseDTO> {
+    const comment = await this.commentService.findCommentById(commentId);
+
+    if (!comment) {
+      throw new NotFoundException(
+        `${commentId}번 Comment가 존재하지 않습니다.`,
+      );
+    }
+
+    if (comment.postId != postId) {
+      throw new BadRequestException('잘못된 요청입니다.');
+    }
+
+    const replies = await this.commentService.findRepliesByCommentId(commentId);
+
+    return new GetCommentListResponseDTO(replies);
   }
 }
