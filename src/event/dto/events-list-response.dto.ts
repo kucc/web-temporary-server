@@ -1,7 +1,7 @@
 import { EventEntity } from '../event.entity';
 import { EventResponseDTO } from './event-response.dto';
 
-export class FindEventListDTO {
+export class EventsListResponseDTO {
   public constructor(events: EventEntity[]) {
     this.count = events.length;
     this.data = events.map(event => {

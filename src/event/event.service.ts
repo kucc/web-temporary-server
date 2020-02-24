@@ -25,7 +25,7 @@ export class EventService {
     return event;
   }
 
-  public async findEventsByDate(
+  public async findEventsInMonth(
     year: number,
     month: number,
   ): Promise<EventEntity[]> {
