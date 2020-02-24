@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EventEntity } from './event.entity';
-import { Repository } from 'typeorm';
+import { Repository, Between } from 'typeorm';
 import { CreateEventBodyDTO } from './dto/create-event-body.dto';
 import { UpdateEventBodyDTO } from './dto/update-event-body.dto';
+import { startOfMonth, endOfMonth } from 'date-fns';
 
 @Injectable()
 export class EventService {
@@ -21,6 +22,21 @@ export class EventService {
     });
 
     return event;
+  }
+
+  public async findEventsByDate(
+    year: number,
+    month: number,
+  ): Promise<EventEntity[]> {
+    const begin = startOfMonth(new Date(year, month - 1));
+    const end = endOfMonth(new Date(year, month - 1));
+
+    const events = await this.eventRepository.find({
+      where: { status: true, endAt: Between(begin, end) },
+      order: { startAt: 'ASC' },
+    });
+
+    return events;
   }
 
   public async createEvent(

@@ -11,16 +11,18 @@ import {
   Body,
   UnauthorizedException,
   BadRequestException,
+  Query,
 } from '@nestjs/common';
 import { Request } from 'express';
 
 import { EventEntity } from './event.entity';
 import { EventService } from './event.service';
+import { EventResponseDTO } from './dto/event-response.dto';
+import { FindEventListDTO } from './dto/find-event-list.dto';
 import { ValidateIdPipe } from '../common/pipe/validate-id.pipe';
 import { CreateEventBodyDTO } from './dto/create-event-body.dto';
 import { UpdateEventBodyDTO } from './dto/update-event-body.dto';
 import { OnlyMemberGuard } from '../common/guards/only-member.guard';
-import { EventResponseDTO } from './dto/event-response.dto';
 
 @Controller('event')
 export class EventController {
@@ -40,6 +42,21 @@ export class EventController {
     }
 
     return event;
+  }
+
+  @Get('')
+  @UseGuards(OnlyMemberGuard)
+  async findEventsByDate(
+    @Query('year', ValidateIdPipe) year: number,
+    @Query('month', ValidateIdPipe) month: number,
+  ): Promise<FindEventListDTO> {
+    const events = await this.eventService.findEventsByDate(year, month);
+
+    if (!events.length) {
+      throw new NotFoundException(`해당 기간에 존재하는 이벤트가 없습니다.`);
+    }
+
+    return new FindEventListDTO(events);
   }
 
   @Post('')
