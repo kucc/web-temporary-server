@@ -10,6 +10,7 @@ import { DeserializeUserMiddleWare } from './common/middleware/deserialize-user.
 import { PostModule } from './post/post.module';
 import { CommentModule } from './comment/comment.module';
 import { LoggingModule } from './logging/logging.module';
+import { EventModule } from './event/event.module';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { LoggingModule } from './logging/logging.module';
     PostModule,
     CommentModule,
     LoggingModule,
+    EventModule,
   ],
   controllers: [AppController],
   providers: [AppService],

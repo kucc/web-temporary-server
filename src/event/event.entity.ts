@@ -41,7 +41,7 @@ export class EventEntity extends Base {
     length: 100,
     nullable: false,
   })
-  public place: boolean;
+  public place: string;
 
   @Column({
     name: 'userId',
@@ -58,10 +58,10 @@ export class EventEntity extends Base {
   public user: UserEntity;
 
   @Column({
-    name: 'eventType',
+    name: 'color',
     type: 'varchar',
     length: 100,
     nullable: true,
   })
-  public eventType: string;
+  public color: string;
 }
