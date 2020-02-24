@@ -67,6 +67,12 @@ export class EventController {
   ): Promise<EventResponseDTO> {
     const requestUserId = req.user.Id;
 
+    const startAt = new Date(createEventBodyDTO.startAt);
+    const endAt = new Date(createEventBodyDTO.endAt);
+    if (startAt > endAt) {
+      throw new BadRequestException(`시간을 다시 설정해주세요`);
+    }
+
     const event = await this.eventService.createEvent(
       createEventBodyDTO,
       requestUserId,
@@ -74,12 +80,6 @@ export class EventController {
 
     if (!event) {
       throw new NotFoundException(`이벤트가 생성에 실패했습니다.`);
-    }
-
-    const startAt = new Date(event.startAt);
-    const endAt = new Date(event.endAt);
-    if (startAt > endAt) {
-      throw new BadRequestException(`시간을 다시 설정해주세요`);
     }
 
     return new EventResponseDTO(event);
@@ -102,6 +102,12 @@ export class EventController {
     if (event.userId !== req.user.Id) {
       throw new UnauthorizedException(`유효한 접근이 아닙니다.`);
     }
+    const startAt = new Date(updateEventBodyDTO.startAt);
+    const endAt = new Date(updateEventBodyDTO.endAt);
+    if (startAt > endAt) {
+      throw new BadRequestException(`시간을 다시 설정해주세요`);
+    }
+
     const newEvent = await this.eventService.updateEvent(
       event,
       updateEventBodyDTO,
@@ -110,13 +116,6 @@ export class EventController {
     if (!newEvent) {
       throw new NotFoundException(`이벤트를 업데이트하는데 실패했습니다.`);
     }
-
-    const startAt = new Date(newEvent.startAt);
-    const endAt = new Date(newEvent.endAt);
-    if (startAt > endAt) {
-      throw new BadRequestException(`시간을 다시 설정해주세요`);
-    }
-
     return new EventResponseDTO(newEvent);
   }
 
