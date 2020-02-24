@@ -1,4 +1,4 @@
-import { IsNotEmpty } from 'class-validator';
+import { IsNotEmpty, IsDateString } from 'class-validator';
 
 export class UpdateEventBodyDTO {
   @IsNotEmpty()
@@ -12,9 +12,9 @@ export class UpdateEventBodyDTO {
   @IsNotEmpty()
   public readonly color: string;
 
-  @IsNotEmpty()
+  @IsDateString()
   public readonly startAt: string;
 
-  @IsNotEmpty()
+  @IsDateString()
   public readonly endAt: string;
 }

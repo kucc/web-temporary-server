@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsEmpty } from 'class-validator';
+import { IsNotEmpty, IsEmpty, IsDateString } from 'class-validator';
 
 export class CreateEventBodyDTO {
   @IsNotEmpty()
@@ -15,9 +15,9 @@ export class CreateEventBodyDTO {
   @IsNotEmpty()
   public readonly place: string;
 
-  @IsNotEmpty()
+  @IsDateString()
   public readonly startAt: string;
 
-  @IsNotEmpty()
+  @IsDateString()
   public readonly endAt: string;
 }
