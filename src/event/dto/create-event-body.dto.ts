@@ -4,7 +4,6 @@ export class CreateEventBodyDTO {
   @IsNotEmpty()
   public readonly name: string;
 
-  @IsNotEmpty()
   public readonly description: string;
 
   @IsEmpty()
