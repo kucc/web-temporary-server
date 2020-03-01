@@ -10,6 +10,7 @@ import {
   UseGuards,
   Req,
   UnauthorizedException,
+  Query,
 } from '@nestjs/common';
 import { Request } from 'express';
 
@@ -29,6 +30,7 @@ import { AttendanceRequestDTO } from '../user-project-attendance/dto/attendance-
 import { AttendanceResponseDTO } from '../user-project-attendance/dto/attendance-response.dto';
 import { AttendanceListResponseDTO } from '../user-project-attendance/dto/attendance-list-response.dto';
 import { UpdateAttendanceRequestDTO } from '../user-project-attendance/dto/attendance-update-request.dto';
+import { ProjectListResponseDTO } from './dto/project-list-response.dto';
 
 @Controller('project')
 export class ProjectController {
@@ -53,6 +55,22 @@ export class ProjectController {
     }
 
     return new ProjectResponseDTO(project);
+  }
+
+  @Get('')
+  @UseGuards(OnlyMemberGuard)
+  async getProjectsInSeason(
+    @Query('season') season: string,
+  ): Promise<ProjectListResponseDTO> {
+    const projects = await this.projectService.getProjectsInSeason(season);
+
+    if (projects.length == 0) {
+      throw new NotFoundException(
+        `${season}에 열린 스터디와 세션이 존재하지 않습니다.`,
+      );
+    }
+
+    return new ProjectListResponseDTO(projects);
   }
 
   @Post('')
