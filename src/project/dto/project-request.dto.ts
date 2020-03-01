@@ -13,6 +13,13 @@ export class ProjectRequestDTO {
   @Max(50)
   public readonly maxAttendance: number;
 
+  @MaxLength(100)
+  public readonly avatar: string;
+
+  @IsNotEmpty()
+  @MaxLength(100)
+  public readonly season: string;
+
   @IsEmpty()
   public userId: number;
 }

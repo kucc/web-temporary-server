@@ -7,6 +7,8 @@ export class ProjectResponseDTO {
     this.title = project.title;
     this.place = project.place;
     this.maxAttendance = project.maxAttendance;
+    this.avatar = project.avatar;
+    this.season = project.season;
     this.userId = project.userId;
   }
   public readonly Id: number;
@@ -14,5 +16,7 @@ export class ProjectResponseDTO {
   public readonly title: string;
   public readonly place: string;
   public readonly maxAttendance: number;
+  public readonly avatar: string;
+  public readonly season: string;
   public readonly userId: number;
 }
