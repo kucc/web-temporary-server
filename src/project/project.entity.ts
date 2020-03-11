@@ -33,6 +33,22 @@ export class ProjectEntity extends Base {
   public maxAttendance: number;
 
   @Column({
+    name: 'avatar',
+    type: 'varchar',
+    length: 100,
+    nullable: true,
+  })
+  public avatar: string;
+
+  @Column({
+    name: 'season',
+    type: 'varchar',
+    length: 100,
+    nullable: true,
+  })
+  public season: string;
+
+  @Column({
     name: 'userId',
     type: 'int',
     nullable: false,
