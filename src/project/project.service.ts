@@ -24,6 +24,18 @@ export class ProjectService {
     return project;
   }
 
+  public async getProjectsInSeason(season: string): Promise<ProjectEntity[]> {
+    const projects = await this.projectRepository.find({
+      where: {
+        season: season,
+        status: true,
+      },
+      order: { Id: 'ASC' },
+    });
+
+    return projects;
+  }
+
   public async createNewProject(
     projectRequestDTO: ProjectRequestDTO,
     userId: number,
